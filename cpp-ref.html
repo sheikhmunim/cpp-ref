@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C++ Quick Ref</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0d0f;
+  --bg2: #141418;
+  --bg3: #1c1c22;
+  --bg4: #242430;
+  --line: rgba(255,255,255,0.07);
+  --line2: rgba(255,255,255,0.12);
+  --text: #e8e8f0;
+  --muted: #6a6a80;
+  --accent: #7c6af7;
+  --accent2: #a78bfa;
+  --green: #34d399;
+  --amber: #fbbf24;
+  --coral: #f87171;
+  --teal: #22d3ee;
+  --pink: #f472b6;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Layout ── */
+.shell {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  grid-template-rows: 52px 1fr;
+  height: 100vh;
+}
+
+/* ── Topbar ── */
+.topbar {
+  grid-column: 1 / -1;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 16px;
+  position: relative;
+}
+
+.logo {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.3px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-badge {
+  font-size: 10px;
+  font-family: var(--mono);
+  font-weight: 400;
+  background: var(--accent);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.search-wrap {
+  flex: 1;
+  max-width: 380px;
+  margin-left: 20px;
+  position: relative;
+}
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 13px;
+}
+#search {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--line2);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 7px 10px 7px 30px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#search:focus { border-color: var(--accent); }
+#search::placeholder { color: var(--muted); }
+
+.count-badge {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--mono);
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  background: var(--bg2);
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+  padding: 12px 10px;
+}
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
+
+.sidebar-label {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 8px 8px 6px;
+  font-family: var(--sans);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--muted);
+  transition: all 0.15s;
+  border: 1px solid transparent;
+  margin-bottom: 2px;
+}
+.nav-item:hover { background: var(--bg3); color: var(--text); }
+.nav-item.active {
+  background: var(--bg4);
+  color: var(--text);
+  border-color: var(--line2);
+}
+.nav-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.nav-count {
+  margin-left: auto;
+  font-size: 10px;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 1px 5px;
+  color: var(--muted);
+}
+
+/* ── Main content ── */
+.main {
+  overflow-y: auto;
+  padding: 20px;
+  background: var(--bg);
+}
+.main::-webkit-scrollbar { width: 3px; }
+.main::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
+
+/* ── Cards ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 12px;
+}
+
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+  display: flex;
+  flex-direction: column;
+}
+.card:hover { border-color: var(--line2); transform: translateY(-1px); }
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px 11px 14px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+  gap: 8px;
+}
+.card-head:hover { border-bottom-color: var(--line); }
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.card-title {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cat-pill {
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  letter-spacing: 0.5px;
+  font-family: var(--mono);
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.toggle-btn {
+  font-size: 10px;
+  color: var(--muted);
+  transition: transform 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+.card.open .toggle-btn { transform: rotate(90deg); color: var(--accent2); }
+
+.card-body {
+  display: none;
+  padding: 12px 14px;
+  flex-direction: column;
+  gap: 8px;
+}
+.card.open .card-body { display: flex; }
+
+.card-desc {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+  font-family: var(--mono);
+}
+
+.code-block {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--text);
+  white-space: pre;
+  overflow-x: auto;
+  position: relative;
+}
+.code-block::-webkit-scrollbar { height: 3px; }
+.code-block::-webkit-scrollbar-thumb { background: var(--bg4); }
+
+.copy-btn {
+  position: absolute;
+  top: 6px; right: 6px;
+  background: var(--bg3);
+  border: 1px solid var(--line2);
+  color: var(--muted);
+  font-size: 10px;
+  font-family: var(--mono);
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, color 0.15s;
+}
+.code-block:hover .copy-btn { opacity: 1; }
+.copy-btn:hover { color: var(--text); }
+.copy-btn.copied { color: var(--green); }
+
+/* Syntax highlight */
+.kw { color: var(--accent2); }
+.fn { color: var(--teal); }
+.cm { color: #4a4a60; }
+.st { color: var(--green); }
+.nm { color: var(--amber); }
+.tp { color: var(--pink); }
+
+.no-results {
+  text-align: center;
+  color: var(--muted);
+  padding: 4rem;
+  font-size: 13px;
+  grid-column: 1 / -1;
+}
+
+/* Category colors */
+.c-io    { background: #1a1a40; color: #818cf8; }
+.c-loop  { background: #0f2a1f; color: #34d399; }
+.c-file  { background: #2a1f0a; color: #fbbf24; }
+.c-mem   { background: #2a0f1a; color: #f472b6; }
+.c-str   { background: #1a0a2a; color: #a78bfa; }
+.c-cond  { background: #0a2020; color: #22d3ee; }
+.c-data  { background: #2a1a0a; color: #fb923c; }
+.c-func  { background: #1a1a1a; color: #9ca3af; }
+.c-t2    { background: #0a1f2a; color: #38bdf8; }
+.c-algo  { background: #2a1500; color: #f97316; }
+
+.dot-io   { background: #818cf8; }
+.dot-loop { background: #34d399; }
+.dot-file { background: #fbbf24; }
+.dot-mem  { background: #f472b6; }
+.dot-str  { background: #a78bfa; }
+.dot-cond { background: #22d3ee; }
+.dot-data { background: #fb923c; }
+.dot-func { background: #9ca3af; }
+.dot-t2   { background: #38bdf8; }
+.dot-algo { background: #f97316; }
+
+/* Expand all toggle */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+}
+.action-btn {
+  font-size: 11px;
+  font-family: var(--mono);
+  background: var(--bg3);
+  border: 1px solid var(--line2);
+  color: var(--muted);
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+.action-btn:hover { color: var(--text); background: var(--bg4); }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="logo">
+      C++ Ref <span class="logo-badge">v2.0</span>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input id="search" placeholder="Search functions, keywords…" oninput="render()" />
+    </div>
+    <div class="topbar-actions">
+      <button class="action-btn" onclick="expandAll()">expand all</button>
+      <button class="action-btn" onclick="collapseAll()">collapse all</button>
+    </div>
+    <span class="count-badge" id="counter"></span>
+  </header>
+
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar"></nav>
+
+  <!-- Main -->
+  <main class="main" id="main"></main>
+
+</div>
+
+<script>
+const cats = [
+  { id: "all",  label: "All", dot: "dot-func" },
+  { id: "io",   label: "I/O", dot: "dot-io" },
+  { id: "loop", label: "Loops", dot: "dot-loop" },
+  { id: "file", label: "File I/O", dot: "dot-file" },
+  { id: "mem",  label: "Memory", dot: "dot-mem" },
+  { id: "str",  label: "Strings", dot: "dot-str" },
+  { id: "cond", label: "Conditionals", dot: "dot-cond" },
+  { id: "data", label: "Data Structures", dot: "dot-data" },
+  { id: "func", label: "Functions", dot: "dot-func" },
+  { id: "t2",   label: "Tier 2 Essentials", dot: "dot-t2" },
+  { id: "algo", label: "Algorithms", dot: "dot-algo" },
+];
+
+const baseData = [
+  // I/O
+  { cat:"io", title:"cin / cout", desc:"Read from stdin and write to stdout — the most common I/O pair.", code:
+`#include <iostream>
+using namespace std;
+
+int main() {
+    int x;
+    cout << "Enter a number: ";
+    cin >> x;
+    cout << "You entered: " << x << "\\n";
+
+    int a, b;
+    cin >> a >> b;
+    cout << "Sum: " << a + b << "\\n";
+    return 0;
+}` },
+  { cat:"io", title:"getline", desc:"Read a whole line including spaces — cin>> stops at whitespace.", code:
+`#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string line;
+    cout << "Enter a sentence: ";
+    getline(cin, line);
+    cout << "You said: " << line << "\\n";
+
+    // after cin>>, flush the newline first:
+    int n;
+    cin >> n;
+    cin.ignore();
+    getline(cin, line);
+    return 0;
+}` },
+  { cat:"io", title:"printf / scanf", desc:"C-style formatted I/O — faster than cout in competitive programming.", code:
+`#include <cstdio>
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    printf("val: %d\\n", n);
+
+    double d;
+    scanf("%lf", &d);
+    printf("double: %.2f\\n", d);
+
+    // format specifiers:
+    // %d int   %f float   %lf double
+    // %c char  %s string  %ld long
+    return 0;
+}` },
+  { cat:"io", title:"cerr / clog", desc:"Write errors/logs to stderr — separate from normal cout output.", code:
+`#include <iostream>
+using namespace std;
+
+int main() {
+    int x = 42;
+    cerr << "Error: file not found\\n"; // unbuffered stderr
+    clog << "Debug: x = " << x << "\\n"; // buffered stderr
+    cout << "Normal output\\n";           // stdout
+    return 0;
+}` },
+
+  // Loops
+  { cat:"loop", title:"for loop", desc:"Classic counted loop — use when you know the iteration count.", code:
+`#include <iostream>
+using namespace std;
+
+int main() {
+    // forward
+    for (int i = 0; i < 5; i++) {
+        cout << i << " "; // 0 1 2 3 4
+    }
+    cout << "\\n";
+
+    // reverse
+    for (int i = 4; i >= 0; i--) {
+        cout << i << " "; // 4 3 2 1 0
+    }
+    cout << "\\n";
+
+    // step by 2
+    for (int i = 0; i < 10; i += 2) {
+        cout << i << " "; // 0 2 4 6 8
+    }
+    return 0;
+}` },
+  { cat:"loop", title:"while loop", desc:"Loop while a condition is true — use when count is unknown.", code:
+`#include <iostream>
+using namespace std;
+
+int main() {
+    int x = 1;
+    while (x < 100) {
+        x *= 2;
+    }
+    cout << x << "\\n"; // 128
+
+    // read until EOF (Ctrl+D / Ctrl+Z to stop):
+    int val, sum = 0;
+    while (cin >> val) {
+        sum += val;
+    }
+    cout << "Sum: " << sum << "\\n";
+    return 0;
+}` },
+  { cat:"loop", title:"do-while loop", desc:"Body runs at least once before checking the condition.", code:
+`#include <iostream>
+using namespace std;
+
+int main() {
+    int choice;
+    do {
+        cout << "Enter 1 to continue, 0 to quit: ";
+        cin >> choice;
+    } while (choice != 0);
+
+    cout << "Done\\n";
+    return 0;
+}` },
+  { cat:"loop", title:"range-for (C++11)", desc:"Iterate over every element in a container — cleanest syntax.", code:
+`#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    vector<int> v = {1, 2, 3, 4, 5};
+
+    // read-only
+    for (int x : v) {
+        cout << x << " "; // 1 2 3 4 5
+    }
+    cout << "\\n";
+
+    // modify elements — use reference:
+    for (int& x : v) {
+        x *= 2;
+    }
+    for (int x : v) {
+        cout << x << " "; // 2 4 6 8 10
+    }
+    return 0;
+}` },
+  { cat:"loop", title:"break / continue", desc:"break exits the loop; continue skips to the next iteration.", code:
+`#include <iostream>
+using namespace std;
+
+int main() {
+    for (int i = 0; i < 10; i++) {
+        if (i == 7) break;         // stop at 7
+        if (i % 2 == 0) continue;  // skip even numbers
+        cout << i << " "; // prints 1 3 5
+    }
+    cout << "\\n";
+    return 0;
+}` },
+
+  // File I/O
+  { cat:"file", title:"fstream (C++)", desc:"Object-oriented file reading and writing — preferred in C++.", code:
+`#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+int main() {
+    // write to file
+    ofstream out("out.txt");
+    out << "hello world\\n";
+    out << "line two\\n";
+    out.close();
+
+    // read line by line
+    ifstream in("out.txt");
+    string line;
+    while (getline(in, line)) {
+        cout << line << "\\n";
+    }
+    in.close();
+    return 0;
+}` },
+  { cat:"file", title:"fopen / fclose (C)", desc:"C-style file handling — lower level, good to know.", code:
+`#include <cstdio>
+
+int main() {
+    FILE* f = fopen("data.txt", "r"); // r w a rb wb
+    if (!f) {
+        printf("Error: could not open file\\n");
+        return 1;
+    }
+
+    char buf[256];
+    while (fgets(buf, sizeof(buf), f)) {
+        printf("%s", buf);
+    }
+    fclose(f);
+    return 0;
+}` },
+  { cat:"file", title:"read full file", desc:"Slurp an entire file into a string in one shot.", code:
+`#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+using namespace std;
+
+int main() {
+    ifstream in("file.txt");
+    if (!in) { cerr << "Cannot open file\\n"; return 1; }
+
+    ostringstream ss;
+    ss << in.rdbuf();
+    string content = ss.str();
+
+    cout << content;
+    return 0;
+}` },
+  { cat:"file", title:"check file exists", desc:"Before opening, verify the file is there.", code:
+`#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+bool exists(const string& name) {
+    ifstream f(name);
+    return f.good();
+}
+
+int main() {
+    if (exists("data.txt")) {
+        cout << "File found\\n";
+    } else {
+        cout << "File not found\\n";
+    }
+    return 0;
+}` },
+  { cat:"file", title:"write modes", desc:"Understand mode flags for fopen and ofstream.", code:
+`#include <fstream>
+#include <iostream>
+using namespace std;
+
+int main() {
+    // truncate (overwrite)
+    ofstream f1("file.txt");
+    f1 << "fresh start\\n";
+    f1.close();
+
+    // append — keeps existing content
+    ofstream f2("file.txt", ios::app);
+    f2 << "appended line\\n";
+    f2.close();
+
+    // fopen modes:
+    // "r"  read text      "rb" read binary
+    // "w"  write (trunc)  "a"  append
+    // "r+" read+write     "w+" write+read
+    return 0;
+}` },
+
+  // Memory
+  { cat:"mem", title:"new / delete", desc:"Dynamic allocation on the heap — always pair them to avoid leaks.", code:
+`#include <iostream>
+using namespace std;
+
+int main() {
+    int* p = new int(42);    // single int
+    cout << *p << "\\n";     // 42
+    delete p;
+
+    int* arr = new int[5]{1,2,3,4,5};
+    for (int i = 0; i < 5; i++)
+        cout << arr[i] << " ";
+    cout << "\\n";
+    delete[] arr;            // note []
+    return 0;
+}` },
+  { cat:"mem", title:"malloc / free (C)", desc:"C-style raw memory allocation — no constructors called.", code:
+`#include <cstdlib>
+#include <cstring>
+#include <cstdio>
+
+int main() {
+    int* p = (int*)malloc(sizeof(int) * 5);
+    if (!p) { printf("alloc failed\\n"); return 1; }
+
+    memset(p, 0, sizeof(int) * 5); // zero out
+    p[2] = 99;
+    printf("%d\\n", p[2]); // 99
+    free(p);
+    return 0;
+}` },
+  { cat:"mem", title:"unique_ptr (C++11)", desc:"Smart pointer — automatically frees memory, no leaks ever.", code:
+`#include <iostream>
+#include <memory>
+using namespace std;
+
+int main() {
+    auto p = make_unique<int>(42);
+    cout << *p << "\\n"; // 42
+    // freed automatically when p goes out of scope
+
+    auto arr = make_unique<int[]>(5);
+    arr[0] = 10;
+    arr[1] = 20;
+    cout << arr[0] << " " << arr[1] << "\\n";
+    return 0;
+}` },
+  { cat:"mem", title:"shared_ptr", desc:"Reference-counted smart pointer — multiple owners, freed when last goes.", code:
+`#include <iostream>
+#include <memory>
+using namespace std;
+
+int main() {
+    auto p1 = make_shared<int>(42);
+    auto p2 = p1;  // both own the int
+    cout << *p1 << "\\n";         // 42
+    cout << p1.use_count() << "\\n"; // 2
+    p1.reset(); // p1 releases ownership
+    cout << p2.use_count() << "\\n"; // 1
+    return 0;
+}` },
+  { cat:"mem", title:"memcpy / memset", desc:"Low-level block memory operations — fast for raw bytes.", code:
+`#include <cstring>
+#include <cstdio>
+
+int main() {
+    char src[] = "hello";
+    char dst[6];
+    memcpy(dst, src, 6);          // copy 6 bytes
+    printf("copied: %s\\n", dst); // hello
+
+    memset(dst, 0, sizeof(dst));  // fill with zeros
+    printf("cleared: %s\\n", dst); // (empty)
+    return 0;
+}` },
+
+  // Strings
+  { cat:"str", title:"std::string basics", desc:"C++ string — knows its own length, safe and easy to use.", code:
+`#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string s = "hello";
+    s += " world";
+    cout << s << "\\n";           // hello world
+    cout << s.length() << "\\n";  // 11
+    cout << s[0] << "\\n";        // h
+    cout << s.substr(6, 5) << "\\n"; // world
+    cout << s.find("wor") << "\\n";  // 6
+    return 0;
+}` },
+  { cat:"str", title:"string ↔ number", desc:"Convert between strings and numbers.", code:
+`#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    // string to number
+    int n    = stoi("42");
+    double d = stod("3.14");
+    long l   = stol("999999");
+    cout << n << " " << d << " " << l << "\\n";
+
+    // number to string
+    string s = to_string(42);
+    string f = to_string(3.14);
+    cout << s << " " << f << "\\n";
+    return 0;
+}` },
+  { cat:"str", title:"string split", desc:"C++ has no built-in split — use stringstream.", code:
+`#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
+using namespace std;
+
+int main() {
+    string line = "apple,banana,cherry";
+    stringstream ss(line);
+    string token;
+    vector<string> parts;
+
+    while (getline(ss, token, ',')) {
+        parts.push_back(token);
+    }
+
+    for (const string& p : parts) {
+        cout << p << "\\n"; // apple / banana / cherry
+    }
+    return 0;
+}` },
+  { cat:"str", title:"char utilities", desc:"Classify and transform individual characters.", code:
+`#include <iostream>
+#include <cctype>
+using namespace std;
+
+int main() {
+    char c = 'A';
+    cout << isalpha(c) << "\\n";  // 1 (true)
+    cout << isdigit('3') << "\\n"; // 1
+    cout << isupper(c) << "\\n";  // 1
+    cout << (char)tolower(c) << "\\n"; // a
+    cout << (char)toupper('z') << "\\n"; // Z
+    cout << isspace(' ') << "\\n"; // 1
+    return 0;
+}` },
+  { cat:"str", title:"C-string (char*)", desc:"Older C-style strings — you'll encounter these in legacy code.", code:
+`#include <cstring>
+#include <cstdio>
+
+int main() {
+    char s[] = "hello";
+    printf("len: %zu\\n", strlen(s)); // 5
+
+    char dst[20];
+    strcpy(dst, s);           // copy
+    strcat(dst, " world");    // concatenate
+    printf("%s\\n", dst);     // hello world
+
+    printf("%d\\n", strcmp("abc", "abc")); // 0 = equal
+    printf("%d\\n", strcmp("b", "a"));     // positive
+    return 0;
+}` },
+  { cat:"str", title:"string replace", desc:"Replace a substring within a string.", code:
+`#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string s = "hello world";
+
+    // replace at position, length, new string:
+    s.replace(6, 5, "C++");
+    cout << s << "\\n"; // hello C++
+
+    // replace all occurrences of 'l' with 'L':
+    string t = "hello world";
+    size_t pos;
+    while ((pos = t.find("l")) != string::npos)
+        t.replace(pos, 1, "L");
+    cout << t << "\\n"; // heLLo worLd
+    return 0;
+}` },
+
+  // Conditionals
+  { cat:"cond", title:"if / else if / else", desc:"Basic branching — the backbone of all logic.", code:
+`#include <iostream>
+using namespace std;
+
+int main() {
+    int x;
+    cin >> x;
+
+    if (x > 0) {
+        cout << "positive\\n";
+    } else if (x < 0) {
+        cout << "negative\\n";
+    } else {
+        cout << "zero\\n";
+    }
+    return 0;
+}` },
+  { cat:"cond", title:"switch", desc:"Match one value against many cases — cleaner than long if-else chains.", code:
+`#include <iostream>
+using namespace std;
+
+int main() {
+    int choice;
+    cin >> choice;
+
+    switch (choice) {
+        case 1:  cout << "one\\n";   break;
+        case 2:  cout << "two\\n";   break;
+        case 3:  cout << "three\\n"; break;
+        default: cout << "other\\n";
+    }
+    return 0;
+}` },
+  { cat:"cond", title:"ternary operator", desc:"Inline if-else for simple single-expression decisions.", code:
+`#include <iostream>
+using namespace std;
+
+int main() {
+    int x = -5;
+    int abs_val = (x >= 0) ? x : -x;
+    cout << abs_val << "\\n"; // 5
+
+    int score = 75;
+    string label = (score >= 50) ? "pass" : "fail";
+    cout << label << "\\n"; // pass
+    return 0;
+}` },
+  { cat:"cond", title:"logical operators", desc:"Combine conditions with AND, OR, NOT.", code:
+`#include <iostream>
+using namespace std;
+
+int main() {
+    int x = 50;
+    bool done = false;
+
+    // AND: both must be true
+    if (x > 0 && x < 100)
+        cout << "in range\\n";
+
+    // OR: at least one true
+    if (x == 0 || x == 50)
+        cout << "is 0 or 50\\n";
+
+    // NOT: invert
+    if (!done)
+        cout << "not done yet\\n";
+
+    return 0;
+}` },
+
+  // Data structures
+  { cat:"data", title:"vector", desc:"Dynamic array — your go-to sequential container.", code:
+`#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    vector<int> v;
+    v.push_back(30);
+    v.push_back(10);
+    v.push_back(20);
+
+    cout << v.size() << "\\n";  // 3
+    cout << v[0] << "\\n";     // 30
+    sort(v.begin(), v.end());  // sort in-place
+    for (int x : v)
+        cout << x << " ";     // 10 20 30
+    cout << "\\n";
+    v.pop_back();              // remove last
+    cout << v.size() << "\\n"; // 2
+    return 0;
+}` },
+  { cat:"data", title:"map", desc:"Key-value store, sorted by key. O(log n) operations.", code:
+`#include <iostream>
+#include <map>
+#include <string>
+using namespace std;
+
+int main() {
+    map<string,int> freq;
+    freq["apple"]++;
+    freq["apple"]++;
+    freq["banana"]++;
+
+    cout << freq["apple"] << "\\n";   // 2
+    cout << freq.count("banana") << "\\n"; // 1
+    freq.erase("banana");
+
+    for (auto& [k,v] : freq)
+        cout << k << ": " << v << "\\n";
+    return 0;
+}` },
+  { cat:"data", title:"unordered_map", desc:"Hash map — O(1) average lookup, faster than map.", code:
+`#include <iostream>
+#include <unordered_map>
+#include <string>
+using namespace std;
+
+int main() {
+    unordered_map<string,int> m;
+    m["key"] = 42;
+    m["other"] = 7;
+
+    cout << m["key"] << "\\n";        // 42
+    cout << m.count("key") << "\\n";  // 1
+    cout << m.count("nope") << "\\n"; // 0
+
+    auto it = m.find("other");
+    if (it != m.end())
+        cout << it->second << "\\n";  // 7
+    return 0;
+}` },
+  { cat:"data", title:"set / unordered_set", desc:"Ordered unique elements (set) or O(1) hash version.", code:
+`#include <iostream>
+#include <set>
+#include <unordered_set>
+using namespace std;
+
+int main() {
+    set<int> s;
+    s.insert(5);
+    s.insert(3);
+    s.insert(5); // duplicate — ignored
+    cout << s.size() << "\\n";   // 2
+    cout << s.count(5) << "\\n"; // 1
+    for (int x : s) cout << x << " "; // 3 5
+    cout << "\\n";
+    s.erase(3);
+
+    unordered_set<int> us = {1,2,3,2,1};
+    cout << us.size() << "\\n"; // 3
+    return 0;
+}` },
+  { cat:"data", title:"stack / queue", desc:"Adapter containers for LIFO and FIFO patterns.", code:
+`#include <iostream>
+#include <stack>
+#include <queue>
+using namespace std;
+
+int main() {
+    stack<int> st;
+    st.push(1); st.push(2); st.push(3);
+    cout << st.top() << "\\n"; // 3 (last in)
+    st.pop();
+    cout << st.top() << "\\n"; // 2
+
+    queue<int> q;
+    q.push(1); q.push(2); q.push(3);
+    cout << q.front() << "\\n"; // 1 (first in)
+    q.pop();
+    cout << q.front() << "\\n"; // 2
+    return 0;
+}` },
+  { cat:"data", title:"priority_queue", desc:"Max-heap by default — O(log n) push and pop.", code:
+`#include <iostream>
+#include <queue>
+#include <vector>
+using namespace std;
+
+int main() {
+    priority_queue<int> pq; // max-heap
+    pq.push(3); pq.push(1); pq.push(5);
+    cout << pq.top() << "\\n"; // 5
+    pq.pop();
+    cout << pq.top() << "\\n"; // 3
+
+    // min-heap:
+    priority_queue<int, vector<int>, greater<int>> minpq;
+    minpq.push(3); minpq.push(1); minpq.push(5);
+    cout << minpq.top() << "\\n"; // 1
+    return 0;
+}` },
+  { cat:"data", title:"array (fixed)", desc:"Stack-allocated fixed-size array — fastest access.", code:
+`#include <iostream>
+#include <array>
+using namespace std;
+
+int main() {
+    // C-style array
+    int arr[5] = {1,2,3,4,5};
+    int n = sizeof(arr)/sizeof(arr[0]); // 5
+    cout << arr[2] << "\\n"; // 3
+
+    // C++11 std::array — bounds-safe:
+    array<int,5> a = {10,20,30,40,50};
+    cout << a.size() << "\\n"; // 5
+    cout << a.at(2) << "\\n";  // 30
+    return 0;
+}` },
+  { cat:"data", title:"pair / tuple", desc:"Bundle two or more values without a struct.", code:
+`#include <iostream>
+#include <utility>
+#include <tuple>
+#include <string>
+using namespace std;
+
+int main() {
+    pair<int,string> p = {1, "hello"};
+    cout << p.first << " " << p.second << "\\n"; // 1 hello
+
+    auto t = make_tuple(42, 3.14, "world");
+    cout << get<0>(t) << "\\n"; // 42
+    cout << get<2>(t) << "\\n"; // world
+
+    // C++17 structured binding:
+    auto [a, b, c] = t;
+    cout << a << " " << c << "\\n"; // 42 world
+    return 0;
+}` },
+
+  // Functions
+  { cat:"func", title:"function basics", desc:"Declare, define, call — the fundamental unit of reusable code.", code:
+`#include <iostream>
+#include <string>
+using namespace std;
+
+int add(int a, int b) {
+    return a + b;
+}
+
+void greet(string name, string prefix = "Hi") {
+    cout << prefix << " " << name << "\\n";
+}
+
+int main() {
+    cout << add(3, 4) << "\\n"; // 7
+    greet("Sheikh");            // Hi Sheikh
+    greet("Sheikh", "Hello");   // Hello Sheikh
+    return 0;
+}` },
+  { cat:"func", title:"pass by reference", desc:"Modify the original variable — avoids copying large objects.", code:
+`#include <iostream>
+#include <string>
+using namespace std;
+
+void doubleIt(int& x) {
+    x *= 2; // modifies original
+}
+
+void printMsg(const string& s) { // read-only, no copy
+    cout << s << "\\n";
+}
+
+int main() {
+    int n = 5;
+    doubleIt(n);
+    cout << n << "\\n"; // 10
+
+    printMsg("hello world");
+    return 0;
+}` },
+  { cat:"func", title:"lambda (C++11)", desc:"Inline anonymous function — great for sort comparators and callbacks.", code:
+`#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    auto square = [](int x) { return x * x; };
+    cout << square(5) << "\\n"; // 25
+
+    // capture outer variable:
+    int factor = 3;
+    auto mult = [factor](int x) { return x * factor; };
+    cout << mult(4) << "\\n"; // 12
+
+    // descending sort:
+    vector<int> v = {3,1,4,1,5,9};
+    sort(v.begin(), v.end(), [](int a, int b){ return a > b; });
+    for (int x : v) cout << x << " "; // 9 5 4 3 1 1
+    return 0;
+}` },
+  { cat:"func", title:"recursion", desc:"A function that calls itself — always needs a base case to stop.", code:
+`#include <iostream>
+using namespace std;
+
+int factorial(int n) {
+    if (n <= 1) return 1;          // base case
+    return n * factorial(n - 1);   // recurse
+}
+
+int fib(int n) {
+    if (n <= 1) return n;
+    return fib(n-1) + fib(n-2);
+}
+
+int main() {
+    cout << factorial(5) << "\\n"; // 120
+    cout << fib(8) << "\\n";       // 21
+    return 0;
+}` },
+  { cat:"func", title:"function overloading", desc:"Same name, different parameter types — C++ picks the right one.", code:
+`#include <iostream>
+#include <string>
+using namespace std;
+
+int    add(int a, int b)       { return a + b; }
+double add(double a, double b) { return a + b; }
+string add(string a, string b) { return a + b; }
+
+int main() {
+    cout << add(1, 2) << "\\n";           // 3
+    cout << add(1.5, 2.5) << "\\n";       // 4.0
+    cout << add("hi ", "there") << "\\n"; // hi there
+    return 0;
+}` },
+  { cat:"func", title:"templates", desc:"Write one function that works for any type.", code:
+`#include <iostream>
+#include <string>
+using namespace std;
+
+template<typename T>
+T maxVal(T a, T b) {
+    return (a > b) ? a : b;
+}
+
+int main() {
+    cout << maxVal(3, 7) << "\\n";          // 7
+    cout << maxVal(3.14, 2.71) << "\\n";    // 3.14
+    cout << maxVal(string("a"), string("z")) << "\\n"; // z
+    return 0;
+}` },
+];
+
+// ── Tier 2 Essentials ──────────────────────────────────────────
+const t2Data = [
+  { cat:"t2", title:"try / catch / throw", desc:"Handle runtime errors gracefully instead of crashing.", code:
+`#include <iostream>
+#include <stdexcept>
+using namespace std;
+
+int divide(int a, int b) {
+    if (b == 0) throw runtime_error("division by zero");
+    return a / b;
+}
+
+int main() {
+    try {
+        cout << divide(10, 2) << "\\n"; // 5
+        cout << divide(10, 0) << "\\n"; // throws!
+    } catch (const runtime_error& e) {
+        cout << "Error: " << e.what() << "\\n";
+    } catch (...) {
+        cout << "Unknown error\\n"; // catch-all
+    }
+    return 0;
+}` },
+  { cat:"t2", title:"struct", desc:"Group related data together under one name.", code:
+`#include <iostream>
+#include <string>
+using namespace std;
+
+struct Person {
+    string name;
+    int age;
+    double height;
+};
+
+void printPerson(const Person& p) {
+    cout << p.name << " age " << p.age << "\\n";
+}
+
+int main() {
+    Person p1 = {"Sheikh", 25, 1.75};
+    Person p2;
+    p2.name = "Alice";
+    p2.age = 30;
+
+    printPerson(p1); // Sheikh age 25
+    printPerson(p2); // Alice age 30
+    return 0;
+}` },
+  { cat:"t2", title:"class basics", desc:"Bundle data and functions together — the core of OOP.", code:
+`#include <iostream>
+#include <string>
+using namespace std;
+
+class Dog {
+public:
+    string name;
+    int age;
+
+    Dog(string n, int a) : name(n), age(a) {} // constructor
+
+    void bark() {
+        cout << name << " says: Woof!\\n";
+    }
+
+    int humanAge() {
+        return age * 7;
+    }
+};
+
+int main() {
+    Dog d("Rex", 3);
+    d.bark();                          // Rex says: Woof!
+    cout << d.humanAge() << "\\n";     // 21
+    return 0;
+}` },
+  { cat:"t2", title:"pointers", desc:"Store memory addresses — foundation of dynamic data structures.", code:
+`#include <iostream>
+using namespace std;
+
+int main() {
+    int x = 42;
+    int* p = &x;       // p holds address of x
+
+    cout << x << "\\n";  // 42  — the value
+    cout << p << "\\n";  // 0x... — the address
+    cout << *p << "\\n"; // 42  — dereference: value at address
+
+    *p = 100;            // modify x via pointer
+    cout << x << "\\n";  // 100
+
+    int* null_p = nullptr; // always init to nullptr if unused
+    return 0;
+}` },
+  { cat:"t2", title:"2D vector (matrix)", desc:"Grid or matrix — vector of vectors.", code:
+`#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    // 3x3 matrix filled with 0
+    int rows = 3, cols = 3;
+    vector<vector<int>> grid(rows, vector<int>(cols, 0));
+
+    grid[0][0] = 1;
+    grid[1][1] = 5;
+    grid[2][2] = 9;
+
+    // print
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            cout << grid[i][j] << " ";
+        }
+        cout << "\\n";
+    }
+    // 1 0 0
+    // 0 5 0
+    // 0 0 9
+    return 0;
+}` },
+  { cat:"t2", title:"math functions", desc:"Common math operations from <cmath> and <algorithm>.", code:
+`#include <iostream>
+#include <cmath>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    cout << sqrt(16.0) << "\\n";     // 4
+    cout << pow(2.0, 10.0) << "\\n"; // 1024
+    cout << abs(-42) << "\\n";       // 42
+    cout << ceil(3.2) << "\\n";      // 4
+    cout << floor(3.8) << "\\n";     // 3
+    cout << round(3.5) << "\\n";     // 4
+    cout << log(M_E) << "\\n";       // 1
+    cout << log2(8.0) << "\\n";      // 3
+
+    cout << min(3, 7) << "\\n";      // 3
+    cout << max(3, 7) << "\\n";      // 7
+    cout << min({1,5,2,8,3}) << "\\n"; // 1
+    return 0;
+}` },
+  { cat:"t2", title:"algorithm utilities", desc:"Powerful STL tools from <algorithm> — no need to implement yourself.", code:
+`#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    vector<int> v = {3,1,4,1,5,9,2,6};
+
+    sort(v.begin(), v.end());         // ascending
+    reverse(v.begin(), v.end());      // flip it
+
+    // binary search (vector must be sorted first)
+    sort(v.begin(), v.end());
+    bool found = binary_search(v.begin(), v.end(), 5); // true
+
+    // count occurrences
+    int cnt = count(v.begin(), v.end(), 1); // 2
+
+    // find first match
+    auto it = find(v.begin(), v.end(), 9);
+    if (it != v.end()) cout << "found at index " << (it - v.begin()) << "\\n";
+
+    // fill with value
+    fill(v.begin(), v.end(), 0);
+    return 0;
+}` },
+  { cat:"t2", title:"string streams", desc:"Use a string like a stream — great for parsing and formatting.", code:
+`#include <iostream>
+#include <sstream>
+#include <string>
+using namespace std;
+
+int main() {
+    // build a string with mixed types (like sprintf)
+    ostringstream oss;
+    oss << "Name: " << "Sheikh" << ", Age: " << 25;
+    string result = oss.str();
+    cout << result << "\\n"; // Name: Sheikh, Age: 25
+
+    // parse a string of numbers
+    istringstream iss("10 20 30 40");
+    int x;
+    while (iss >> x) {
+        cout << x * 2 << " "; // 20 40 60 80
+    }
+    cout << "\\n";
+    return 0;
+}` },
+  { cat:"t2", title:"enum", desc:"Named constants — cleaner than raw numbers in your code.", code:
+`#include <iostream>
+using namespace std;
+
+enum Direction { NORTH, SOUTH, EAST, WEST }; // 0,1,2,3
+
+enum class Color { RED, GREEN, BLUE }; // C++11 scoped enum (safer)
+
+int main() {
+    Direction d = NORTH;
+    if (d == NORTH) cout << "Going north\\n";
+
+    Color c = Color::RED;
+    if (c == Color::RED) cout << "Red\\n";
+
+    // switch on enum:
+    switch (d) {
+        case NORTH: cout << "N\\n"; break;
+        case SOUTH: cout << "S\\n"; break;
+        default: cout << "E/W\\n";
+    }
+    return 0;
+}` },
+  { cat:"t2", title:"typedef / using", desc:"Create shorter aliases for long type names.", code:
+`#include <iostream>
+#include <vector>
+#include <map>
+using namespace std;
+
+// C++11 style (preferred)
+using vi = vector<int>;
+using vvi = vector<vector<int>>;
+using pii = pair<int,int>;
+using Graph = map<int, vector<int>>;
+
+// old C style
+typedef long long ll;
+
+int main() {
+    vi nums = {1, 2, 3};
+    vvi grid(3, vi(3, 0));
+    pii point = {3, 4};
+    ll big = 1000000000LL * 1000;
+
+    cout << point.first << "," << point.second << "\\n"; // 3,4
+    cout << big << "\\n";
+    return 0;
+}` },
+];
+
+// ── Algorithms ─────────────────────────────────────────────────
+const algoData = [
+  { cat:"algo", title:"binary search", desc:"Find a value in a sorted array in O(log n) — much faster than linear scan.", code:
+`#include <iostream>
+#include <vector>
+using namespace std;
+
+// returns index of target, or -1 if not found
+int binarySearch(vector<int>& arr, int target) {
+    int lo = 0, hi = arr.size() - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2; // avoids overflow
+        if (arr[mid] == target) return mid;
+        else if (arr[mid] < target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return -1;
+}
+
+int main() {
+    vector<int> v = {1, 3, 5, 7, 9, 11, 13};
+    cout << binarySearch(v, 7)  << "\\n"; // 3
+    cout << binarySearch(v, 6)  << "\\n"; // -1
+    cout << binarySearch(v, 13) << "\\n"; // 6
+    return 0;
+}` },
+  { cat:"algo", title:"bubble sort", desc:"Simple O(n²) sort — great for learning, too slow for large data.", code:
+`#include <iostream>
+#include <vector>
+using namespace std;
+
+void bubbleSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j+1]) {
+                swap(arr[j], arr[j+1]);
+                swapped = true;
+            }
+        }
+        if (!swapped) break; // already sorted
+    }
+}
+
+int main() {
+    vector<int> v = {64, 34, 25, 12, 22, 11, 90};
+    bubbleSort(v);
+    for (int x : v) cout << x << " "; // 11 12 22 25 34 64 90
+    return 0;
+}` },
+  { cat:"algo", title:"merge sort", desc:"Divide-and-conquer O(n log n) sort — fast and stable.", code:
+`#include <iostream>
+#include <vector>
+using namespace std;
+
+void merge(vector<int>& arr, int l, int m, int r) {
+    vector<int> left(arr.begin()+l, arr.begin()+m+1);
+    vector<int> right(arr.begin()+m+1, arr.begin()+r+1);
+    int i=0, j=0, k=l;
+    while (i<left.size() && j<right.size())
+        arr[k++] = (left[i]<=right[j]) ? left[i++] : right[j++];
+    while (i<left.size())  arr[k++] = left[i++];
+    while (j<right.size()) arr[k++] = right[j++];
+}
+
+void mergeSort(vector<int>& arr, int l, int r) {
+    if (l >= r) return;
+    int m = l + (r - l) / 2;
+    mergeSort(arr, l, m);
+    mergeSort(arr, m+1, r);
+    merge(arr, l, m, r);
+}
+
+int main() {
+    vector<int> v = {38, 27, 43, 3, 9, 82, 10};
+    mergeSort(v, 0, v.size()-1);
+    for (int x : v) cout << x << " "; // 3 9 10 27 38 43 82
+    return 0;
+}` },
+  { cat:"algo", title:"linear search", desc:"Scan every element — O(n). Works on unsorted data.", code:
+`#include <iostream>
+#include <vector>
+using namespace std;
+
+int linearSearch(const vector<int>& arr, int target) {
+    for (int i = 0; i < arr.size(); i++) {
+        if (arr[i] == target) return i;
+    }
+    return -1; // not found
+}
+
+int main() {
+    vector<int> v = {5, 3, 8, 1, 9, 2, 7};
+    cout << linearSearch(v, 9) << "\\n"; // 4
+    cout << linearSearch(v, 6) << "\\n"; // -1
+    return 0;
+}` },
+  { cat:"algo", title:"two pointers", desc:"Use two indices moving toward each other — O(n). Common for array/string problems.", code:
+`#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+// check if array has a pair that sums to target (sorted input)
+bool hasPairSum(vector<int>& arr, int target) {
+    int lo = 0, hi = arr.size() - 1;
+    while (lo < hi) {
+        int sum = arr[lo] + arr[hi];
+        if (sum == target) return true;
+        else if (sum < target) lo++;
+        else hi--;
+    }
+    return false;
+}
+
+// check palindrome
+bool isPalindrome(const string& s) {
+    int lo = 0, hi = s.size() - 1;
+    while (lo < hi) {
+        if (s[lo] != s[hi]) return false;
+        lo++; hi--;
+    }
+    return true;
+}
+
+int main() {
+    vector<int> v = {1, 2, 3, 4, 6};
+    cout << hasPairSum(v, 6) << "\\n"; // 1 (true)
+    cout << isPalindrome("racecar") << "\\n"; // 1
+    cout << isPalindrome("hello") << "\\n";   // 0
+    return 0;
+}` },
+  { cat:"algo", title:"sliding window", desc:"Maintain a window over an array — O(n). Great for subarray/substring problems.", code:
+`#include <iostream>
+#include <vector>
+using namespace std;
+
+// max sum of subarray of size k
+int maxSumWindow(vector<int>& arr, int k) {
+    int n = arr.size();
+    if (n < k) return -1;
+
+    // sum first window
+    int windowSum = 0;
+    for (int i = 0; i < k; i++) windowSum += arr[i];
+
+    int maxSum = windowSum;
+
+    // slide the window
+    for (int i = k; i < n; i++) {
+        windowSum += arr[i] - arr[i - k]; // add new, remove old
+        maxSum = max(maxSum, windowSum);
+    }
+    return maxSum;
+}
+
+int main() {
+    vector<int> v = {2, 1, 5, 1, 3, 2};
+    cout << maxSumWindow(v, 3) << "\\n"; // 9 (5+1+3)
+    cout << maxSumWindow(v, 2) << "\\n"; // 6 (5+1)
+    return 0;
+}` },
+  { cat:"algo", title:"depth-first search (DFS)", desc:"Explore a graph/tree as deep as possible before backtracking — uses recursion or stack.", code:
+`#include <iostream>
+#include <vector>
+using namespace std;
+
+// adjacency list graph
+vector<vector<int>> graph = {
+    {1, 2},    // node 0 connects to 1,2
+    {0, 3, 4}, // node 1 connects to 0,3,4
+    {0},       // node 2 connects to 0
+    {1},       // node 3 connects to 1
+    {1}        // node 4 connects to 1
+};
+
+vector<bool> visited(5, false);
+
+void dfs(int node) {
+    visited[node] = true;
+    cout << node << " ";
+    for (int neighbor : graph[node]) {
+        if (!visited[neighbor])
+            dfs(neighbor);
+    }
+}
+
+int main() {
+    dfs(0); // 0 1 3 4 2
+    cout << "\\n";
+    return 0;
+}` },
+  { cat:"algo", title:"breadth-first search (BFS)", desc:"Explore level by level — uses a queue. Finds shortest path in unweighted graphs.", code:
+`#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+
+vector<vector<int>> graph = {
+    {1, 2},
+    {0, 3, 4},
+    {0},
+    {1},
+    {1}
+};
+
+void bfs(int start) {
+    vector<bool> visited(5, false);
+    queue<int> q;
+
+    visited[start] = true;
+    q.push(start);
+
+    while (!q.empty()) {
+        int node = q.front(); q.pop();
+        cout << node << " ";
+
+        for (int neighbor : graph[node]) {
+            if (!visited[neighbor]) {
+                visited[neighbor] = true;
+                q.push(neighbor);
+            }
+        }
+    }
+}
+
+int main() {
+    bfs(0); // 0 1 2 3 4
+    cout << "\\n";
+    return 0;
+}` },
+  { cat:"algo", title:"fibonacci (memoization)", desc:"Cache results to avoid redundant recursion — turns O(2^n) into O(n).", code:
+`#include <iostream>
+#include <vector>
+using namespace std;
+
+vector<int> memo(100, -1); // -1 means not computed yet
+
+int fib(int n) {
+    if (n <= 1) return n;
+    if (memo[n] != -1) return memo[n]; // already computed!
+    memo[n] = fib(n-1) + fib(n-2);
+    return memo[n];
+}
+
+int main() {
+    for (int i = 0; i <= 10; i++)
+        cout << fib(i) << " "; // 0 1 1 2 3 5 8 13 21 34 55
+    cout << "\\n";
+    cout << fib(40) << "\\n"; // 102334155 — fast!
+    return 0;
+}` },
+  { cat:"algo", title:"dynamic programming (DP)", desc:"Build solution from smaller subproblems — bottom-up approach.", code:
+`#include <iostream>
+#include <vector>
+using namespace std;
+
+// Classic: 0/1 knapsack — max value with weight limit
+int knapsack(vector<int>& weights, vector<int>& values, int capacity) {
+    int n = weights.size();
+    vector<vector<int>> dp(n+1, vector<int>(capacity+1, 0));
+
+    for (int i = 1; i <= n; i++) {
+        for (int w = 0; w <= capacity; w++) {
+            dp[i][w] = dp[i-1][w]; // don't take item i
+            if (weights[i-1] <= w)
+                dp[i][w] = max(dp[i][w],
+                    dp[i-1][w-weights[i-1]] + values[i-1]); // take it
+        }
+    }
+    return dp[n][capacity];
+}
+
+int main() {
+    vector<int> weights = {1, 3, 4, 5};
+    vector<int> values  = {1, 4, 5, 7};
+    cout << knapsack(weights, values, 7) << "\\n"; // 9
+    return 0;
+}` },
+  { cat:"algo", title:"longest common subsequence", desc:"Classic DP — find longest sequence present in both strings.", code:
+`#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+int lcs(const string& a, const string& b) {
+    int m = a.size(), n = b.size();
+    vector<vector<int>> dp(m+1, vector<int>(n+1, 0));
+
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (a[i-1] == b[j-1])
+                dp[i][j] = dp[i-1][j-1] + 1;
+            else
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+        }
+    }
+    return dp[m][n];
+}
+
+int main() {
+    cout << lcs("ABCBDAB", "BDCABA") << "\\n"; // 4 (BCBA)
+    cout << lcs("AGGTAB", "GXTXAYB") << "\\n"; // 4 (GTAB)
+    return 0;
+}` },
+  { cat:"algo", title:"frequency counter", desc:"Count occurrences of elements — O(n). Core pattern for many problems.", code:
+`#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <string>
+using namespace std;
+
+int main() {
+    // count word frequency
+    vector<string> words = {"apple","banana","apple","cherry","banana","apple"};
+    unordered_map<string,int> freq;
+    for (const string& w : words) freq[w]++;
+
+    for (auto& [word, count] : freq)
+        cout << word << ": " << count << "\\n";
+    // apple: 3  banana: 2  cherry: 1
+
+    // find most frequent
+    string most; int maxCnt = 0;
+    for (auto& [w, c] : freq)
+        if (c > maxCnt) { maxCnt = c; most = w; }
+    cout << "Most frequent: " << most << "\\n"; // apple
+    return 0;
+}` },
+  { cat:"algo", title:"prefix sum", desc:"Precompute cumulative sums for O(1) range sum queries.", code:
+`#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    vector<int> arr = {3, 1, 4, 1, 5, 9, 2, 6};
+    int n = arr.size();
+
+    // build prefix sum array
+    vector<int> prefix(n+1, 0);
+    for (int i = 0; i < n; i++)
+        prefix[i+1] = prefix[i] + arr[i];
+
+    // sum from index l to r (inclusive) in O(1):
+    auto rangeSum = [&](int l, int r) {
+        return prefix[r+1] - prefix[l];
+    };
+
+    cout << rangeSum(0, 3) << "\\n"; // 9  (3+1+4+1)
+    cout << rangeSum(2, 6) << "\\n"; // 22 (4+1+5+9+2)
+    cout << rangeSum(1, 5) << "\\n"; // 20 (1+4+1+5+9)
+    return 0;
+}` },
+  { cat:"algo", title:"GCD / LCM", desc:"Greatest common divisor and least common multiple — from <numeric> in C++17 or implement with Euclid.", code:
+`#include <iostream>
+#include <numeric>
+using namespace std;
+
+// Euclid's algorithm (manual)
+int gcd(int a, int b) {
+    while (b) { a %= b; swap(a, b); }
+    return a;
+}
+
+int lcm(int a, int b) {
+    return a / gcd(a, b) * b; // divide first avoids overflow
+}
+
+int main() {
+    cout << gcd(48, 18) << "\\n"; // 6
+    cout << lcm(4, 6) << "\\n";   // 12
+
+    // C++17 built-in:
+    cout << __gcd(48, 18) << "\\n"; // 6
+    return 0;
+}` },
+  { cat:"algo", title:"prime check / sieve", desc:"Check if a number is prime, or find all primes up to N with Sieve of Eratosthenes.", code:
+`#include <iostream>
+#include <vector>
+using namespace std;
+
+// O(sqrt(n)) primality check
+bool isPrime(int n) {
+    if (n < 2) return false;
+    for (int i = 2; i * i <= n; i++)
+        if (n % i == 0) return false;
+    return true;
+}
+
+// Sieve of Eratosthenes — all primes up to N in O(N log log N)
+vector<bool> sieve(int N) {
+    vector<bool> is_prime(N+1, true);
+    is_prime[0] = is_prime[1] = false;
+    for (int i = 2; i * i <= N; i++)
+        if (is_prime[i])
+            for (int j = i*i; j <= N; j += i)
+                is_prime[j] = false;
+    return is_prime;
+}
+
+int main() {
+    cout << isPrime(17) << "\\n"; // 1
+    cout << isPrime(18) << "\\n"; // 0
+
+    auto primes = sieve(30);
+    for (int i = 2; i <= 30; i++)
+        if (primes[i]) cout << i << " "; // 2 3 5 7 11 13 17 19 23 29
+    return 0;
+}` },
+];
+
+const data = [...baseData, ...t2Data, ...algoData];
+let activeFilter = "all";
+const openCards = new Set();
+
+function catConfig(id) {
+  const map = {
+    io:   { pill:"c-io",   dot:"dot-io"   },
+    loop: { pill:"c-loop", dot:"dot-loop" },
+    file: { pill:"c-file", dot:"dot-file" },
+    mem:  { pill:"c-mem",  dot:"dot-mem"  },
+    str:  { pill:"c-str",  dot:"dot-str"  },
+    cond: { pill:"c-cond", dot:"dot-cond" },
+    data: { pill:"c-data", dot:"dot-data" },
+    func: { pill:"c-func", dot:"dot-func" },
+    t2:   { pill:"c-t2",   dot:"dot-t2"   },
+    algo: { pill:"c-algo", dot:"dot-algo" },
+  };
+  return map[id] || { pill:"c-func", dot:"dot-func" };
+}
+
+function catLabel(id) {
+  const m = {
+    io:"I/O", loop:"Loops", file:"File I/O", mem:"Memory",
+    str:"Strings", cond:"Conditionals", data:"Data Structures",
+    func:"Functions", t2:"Tier 2", algo:"Algorithm"
+  };
+  return m[id] || id;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function highlight(code) {
+  // Tokenise raw code, then escape each token individually
+  const tokens = [];
+  let rest = code;
+
+  const rules = [
+    { cls: 'cm', re: /^\/\/[^\n]*/ },
+    { cls: 'st', re: /^"(?:[^"\\]|\\.)*"/ },
+    { cls: 'st', re: /^'[^']*'/ },
+    { cls: 'kw', re: /^#?\b(include|int|double|float|char|bool|void|string|auto|const|using|namespace|return|if|else|while|for|do|break|continue|switch|case|default|new|delete|nullptr|true|false|class|struct|template|typename|std|size_t|long|short|unsigned)\b/ },
+    { cls: 'nm', re: /^\b\d+(\.\d+)?\b/ },
+  ];
+
+  while (rest.length) {
+    let matched = false;
+    for (const rule of rules) {
+      const m = rest.match(rule.re);
+      if (m) {
+        tokens.push(`<span class="${rule.cls}">${escHtml(m[0])}</span>`);
+        rest = rest.slice(m[0].length);
+        matched = true;
+        break;
+      }
+    }
+    if (!matched) {
+      tokens.push(escHtml(rest[0]));
+      rest = rest.slice(1);
+    }
+  }
+  return tokens.join('');
+}
+
+function buildSidebar() {
+  const counts = {};
+  data.forEach(d => { counts[d.cat] = (counts[d.cat]||0) + 1; });
+  const sidebar = document.getElementById("sidebar");
+  sidebar.innerHTML = `<div class="sidebar-label">Categories</div>` +
+    cats.map(c => {
+      const cnt = c.id === "all" ? data.length : (counts[c.id]||0);
+      const cfg = catConfig(c.id);
+      return `<div class="nav-item ${activeFilter===c.id?'active':''}" onclick="setFilter('${c.id}')">
+        <span class="nav-dot ${cfg.dot}"></span>
+        ${c.label}
+        <span class="nav-count">${cnt}</span>
+      </div>`;
+    }).join("");
+}
+
+function render() {
+  const q = document.getElementById("search").value.toLowerCase().trim();
+  const main = document.getElementById("main");
+
+  let items = data.filter(d => {
+    if (activeFilter !== "all" && d.cat !== activeFilter) return false;
+    if (q) return d.title.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q) || d.code.toLowerCase().includes(q);
+    return true;
+  });
+
+  document.getElementById("counter").textContent = `${items.length} snippets`;
+
+  if (!items.length) {
+    main.innerHTML = `<div class="grid"><div class="no-results">no results for "${q}"</div></div>`;
+    return;
+  }
+
+  main.innerHTML = `<div class="grid">${items.map(item => {
+    const id = item.cat + "_" + item.title.replace(/\W+/g,"_");
+    const isOpen = openCards.has(id);
+    const cfg = catConfig(item.cat);
+    return `<div class="card ${isOpen?'open':''}" id="card_${id}">
+      <div class="card-head" onclick="toggleCard('${id}')">
+        <div class="card-title-row">
+          <span class="cat-pill ${cfg.pill}">${catLabel(item.cat)}</span>
+          <span class="card-title">${item.title}</span>
+        </div>
+        <span class="toggle-btn">▶</span>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">${item.desc}</p>
+        <div class="code-block" id="code_${id}"><code>${highlight(item.code)}</code><button class="copy-btn" onclick="copyCode(event,'${id}')">copy</button></div>
+      </div>
+    </div>`;
+  }).join("")}</div>`;
+}
+
+function toggleCard(id) {
+  if (openCards.has(id)) openCards.delete(id);
+  else openCards.add(id);
+  render();
+}
+
+function setFilter(cat) {
+  activeFilter = cat;
+  buildSidebar();
+  render();
+}
+
+function expandAll() {
+  const q = document.getElementById("search").value.toLowerCase().trim();
+  data.filter(d => {
+    if (activeFilter !== "all" && d.cat !== activeFilter) return false;
+    if (q) return d.title.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q) || d.code.toLowerCase().includes(q);
+    return true;
+  }).forEach(d => {
+    const id = d.cat + "_" + d.title.replace(/\W+/g,"_");
+    openCards.add(id);
+  });
+  render();
+}
+
+function collapseAll() {
+  openCards.clear();
+  render();
+}
+
+function copyCode(e, id) {
+  e.stopPropagation();
+  const el = document.getElementById("code_" + id);
+  const text = el.querySelector("code").innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = el.querySelector(".copy-btn");
+    btn.textContent = "copied!";
+    btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 1500);
+  });
+}
+
+// keyboard shortcut: / to focus search
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement !== document.getElementById("search")) {
+    e.preventDefault();
+    document.getElementById("search").focus();
+  }
+  if (e.key === "Escape") document.getElementById("search").blur();
+});
+
+buildSidebar();
+render();
+</script>
+</body>
+</html>
