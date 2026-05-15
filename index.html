@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C++ Quick Ref</title>
+<title>Quick Ref — C++ & Python</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -22,6 +22,7 @@
   --coral: #f87171;
   --teal: #22d3ee;
   --pink: #f472b6;
+  --py-accent: #7aa2f7;
   --mono: 'JetBrains Mono', monospace;
   --sans: 'Syne', sans-serif;
 }
@@ -52,7 +53,7 @@ html, body {
   display: flex;
   align-items: center;
   padding: 0 20px;
-  gap: 16px;
+  gap: 12px;
   position: relative;
 }
 
@@ -65,6 +66,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
 }
 .logo-badge {
   font-size: 10px;
@@ -75,12 +77,42 @@ html, body {
   padding: 2px 6px;
   border-radius: 4px;
   letter-spacing: 0.5px;
+  transition: background 0.25s;
 }
+.logo-badge.py { background: var(--py-accent); }
 
+/* ── Language switcher ── */
+.lang-switch {
+  display: flex;
+  background: var(--bg3);
+  border: 1px solid var(--line2);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.lang-btn {
+  font-size: 11px;
+  font-family: var(--mono);
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.18s;
+  color: var(--muted);
+  background: transparent;
+  letter-spacing: 0.3px;
+}
+.lang-btn:hover { color: var(--text); }
+.lang-btn.active-cpp { background: var(--accent); color: #fff; }
+.lang-btn.active-py  { background: var(--py-accent); color: #0d0d0f; }
+
+/* ── Search ── */
 .search-wrap {
   flex: 1;
-  max-width: 380px;
-  margin-left: 20px;
+  max-width: 360px;
+  margin-left: 4px;
   position: relative;
 }
 .search-icon {
@@ -90,6 +122,7 @@ html, body {
   transform: translateY(-50%);
   color: var(--muted);
   font-size: 13px;
+  pointer-events: none;
 }
 #search {
   width: 100%;
@@ -104,6 +137,7 @@ html, body {
   transition: border-color 0.2s;
 }
 #search:focus { border-color: var(--accent); }
+#search.py-focus:focus { border-color: var(--py-accent); }
 #search::placeholder { color: var(--muted); }
 
 .count-badge {
@@ -112,6 +146,26 @@ html, body {
   color: var(--muted);
   font-family: var(--mono);
 }
+
+/* ── Topbar actions ── */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 4px;
+}
+.action-btn {
+  font-size: 11px;
+  font-family: var(--mono);
+  background: var(--bg3);
+  border: 1px solid var(--line2);
+  color: var(--muted);
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+.action-btn:hover { color: var(--text); background: var(--bg4); }
 
 /* ── Sidebar ── */
 .sidebar {
@@ -146,16 +200,8 @@ html, body {
   margin-bottom: 2px;
 }
 .nav-item:hover { background: var(--bg3); color: var(--text); }
-.nav-item.active {
-  background: var(--bg4);
-  color: var(--text);
-  border-color: var(--line2);
-}
-.nav-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
+.nav-item.active { background: var(--bg4); color: var(--text); border-color: var(--line2); }
+.nav-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 .nav-count {
   margin-left: auto;
   font-size: 10px;
@@ -165,7 +211,7 @@ html, body {
   color: var(--muted);
 }
 
-/* ── Main content ── */
+/* ── Main ── */
 .main {
   overflow-y: auto;
   padding: 20px;
@@ -174,13 +220,14 @@ html, body {
 .main::-webkit-scrollbar { width: 3px; }
 .main::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
 
-/* ── Cards ── */
+/* ── Grid ── */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 12px;
 }
 
+/* ── Cards ── */
 .card {
   background: var(--bg2);
   border: 1px solid var(--line);
@@ -196,7 +243,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 11px 14px 11px 14px;
+  padding: 11px 14px;
   cursor: pointer;
   user-select: none;
   border-bottom: 1px solid transparent;
@@ -239,6 +286,7 @@ html, body {
   flex-shrink: 0;
 }
 .card.open .toggle-btn { transform: rotate(90deg); color: var(--accent2); }
+.card.open.py-card .toggle-btn { color: var(--py-accent); }
 
 .card-body {
   display: none;
@@ -266,6 +314,7 @@ html, body {
   white-space: pre;
   overflow-x: auto;
   position: relative;
+  font-family: var(--mono);
 }
 .code-block::-webkit-scrollbar { height: 3px; }
 .code-block::-webkit-scrollbar-thumb { background: var(--bg4); }
@@ -288,7 +337,7 @@ html, body {
 .copy-btn:hover { color: var(--text); }
 .copy-btn.copied { color: var(--green); }
 
-/* Syntax highlight */
+/* ── C++ Syntax highlight ── */
 .kw { color: var(--accent2); }
 .fn { color: var(--teal); }
 .cm { color: #4a4a60; }
@@ -296,6 +345,16 @@ html, body {
 .nm { color: var(--amber); }
 .tp { color: var(--pink); }
 
+/* ── Python Syntax highlight (scoped) ── */
+.py-hl .kw  { color: #bb9af7; }
+.py-hl .fn  { color: #7aa2f7; }
+.py-hl .str { color: #9ece6a; }
+.py-hl .cm  { color: #565f89; font-style: italic; }
+.py-hl .num { color: #ff9e64; }
+.py-hl .cl  { color: #e0af68; }
+.py-hl .bl  { color: #f7768e; }
+
+/* ── No results ── */
 .no-results {
   text-align: center;
   color: var(--muted);
@@ -304,7 +363,9 @@ html, body {
   grid-column: 1 / -1;
 }
 
-/* Category colors */
+/* ═══════════════════════════════════════
+   C++ category pills + dots
+═══════════════════════════════════════ */
 .c-io    { background: #1a1a40; color: #818cf8; }
 .c-loop  { background: #0f2a1f; color: #34d399; }
 .c-file  { background: #2a1f0a; color: #fbbf24; }
@@ -327,25 +388,56 @@ html, body {
 .dot-t2   { background: #38bdf8; }
 .dot-algo { background: #f97316; }
 
-/* Expand all toggle */
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: 12px;
-}
-.action-btn {
-  font-size: 11px;
-  font-family: var(--mono);
-  background: var(--bg3);
-  border: 1px solid var(--line2);
-  color: var(--muted);
-  padding: 5px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: color 0.15s, background 0.15s;
-}
-.action-btn:hover { color: var(--text); background: var(--bg4); }
+/* ═══════════════════════════════════════
+   Python category pills + dots
+═══════════════════════════════════════ */
+.c-py-strings      { background: #0d1e3e; color: #7aa2f7; }
+.c-py-lists        { background: #142b10; color: #9ece6a; }
+.c-py-dicts        { background: #3d0d1a; color: #f7768e; }
+.c-py-control      { background: #2a1e08; color: #e0af68; }
+.c-py-functions    { background: #1e1030; color: #bb9af7; }
+.c-py-comprehensions { background: #082a24; color: #73daca; }
+.c-py-classes      { background: #2a1508; color: #ff9e64; }
+.c-py-builtins     { background: #082a1e; color: #4dd9ac; }
+.c-py-io           { background: #0f1a40; color: #818cf8; }
+.c-py-exceptions   { background: #3a0e0e; color: #f87171; }
+.c-py-async        { background: #1a1a30; color: #c0caf5; }
+.c-py-stdlib       { background: #2a1e05; color: #fbbf24; }
+.c-py-typing       { background: #0a1e30; color: #38bdf8; }
+.c-py-debugging    { background: #2a1305; color: #fb923c; }
+.c-py-numpy        { background: #102818; color: #86efac; }
+.c-py-pandas       { background: #081e30; color: #7dcfff; }
+.c-py-functools    { background: #1c1030; color: #d8b4fe; }
+.c-py-concurrency  { background: #082828; color: #22d3ee; }
+.c-py-networking   { background: #0a1830; color: #60a5fa; }
+.c-py-testing      { background: #0a2a14; color: #4ade80; }
+.c-py-torch        { background: #2e1010; color: #fca5a5; }
+.c-py-pydantic     { background: #2a2006; color: #fcd34d; }
+.c-py-text         { background: #1c1e24; color: #94a3b8; }
+
+.dot-py-strings      { background: #7aa2f7; }
+.dot-py-lists        { background: #9ece6a; }
+.dot-py-dicts        { background: #f7768e; }
+.dot-py-control      { background: #e0af68; }
+.dot-py-functions    { background: #bb9af7; }
+.dot-py-comprehensions { background: #73daca; }
+.dot-py-classes      { background: #ff9e64; }
+.dot-py-builtins     { background: #4dd9ac; }
+.dot-py-io           { background: #818cf8; }
+.dot-py-exceptions   { background: #f87171; }
+.dot-py-async        { background: #c0caf5; }
+.dot-py-stdlib       { background: #fbbf24; }
+.dot-py-typing       { background: #38bdf8; }
+.dot-py-debugging    { background: #fb923c; }
+.dot-py-numpy        { background: #86efac; }
+.dot-py-pandas       { background: #7dcfff; }
+.dot-py-functools    { background: #d8b4fe; }
+.dot-py-concurrency  { background: #22d3ee; }
+.dot-py-networking   { background: #60a5fa; }
+.dot-py-testing      { background: #4ade80; }
+.dot-py-torch        { background: #fca5a5; }
+.dot-py-pydantic     { background: #fcd34d; }
+.dot-py-text         { background: #94a3b8; }
 </style>
 </head>
 <body>
@@ -354,7 +446,12 @@ html, body {
   <!-- Topbar -->
   <header class="topbar">
     <div class="logo">
-      C++ Ref <span class="logo-badge">v2.0</span>
+      <span id="logo-lang">C++</span> Ref
+      <span class="logo-badge" id="lang-badge">v2.0</span>
+    </div>
+    <div class="lang-switch">
+      <button class="lang-btn active-cpp" id="btn-cpp" onclick="setLang('cpp')">C++</button>
+      <button class="lang-btn" id="btn-py"  onclick="setLang('py')">Python</button>
     </div>
     <div class="search-wrap">
       <span class="search-icon">⌕</span>
@@ -374,23 +471,51 @@ html, body {
   <main class="main" id="main"></main>
 
 </div>
-
 <script>
-const cats = [
-  { id: "all",  label: "All", dot: "dot-func" },
-  { id: "io",   label: "I/O", dot: "dot-io" },
-  { id: "loop", label: "Loops", dot: "dot-loop" },
-  { id: "file", label: "File I/O", dot: "dot-file" },
-  { id: "mem",  label: "Memory", dot: "dot-mem" },
-  { id: "str",  label: "Strings", dot: "dot-str" },
-  { id: "cond", label: "Conditionals", dot: "dot-cond" },
-  { id: "data", label: "Data Structures", dot: "dot-data" },
-  { id: "func", label: "Functions", dot: "dot-func" },
-  { id: "t2",   label: "Tier 2 Essentials", dot: "dot-t2" },
-  { id: "algo", label: "Algorithms", dot: "dot-algo" },
+// ── Category definitions ─────────────────────────────
+const cppCats = [
+  { id:"all",  label:"All",              dot:"dot-func" },
+  { id:"io",   label:"I/O",             dot:"dot-io"   },
+  { id:"loop", label:"Loops",           dot:"dot-loop" },
+  { id:"file", label:"File I/O",        dot:"dot-file" },
+  { id:"mem",  label:"Memory",          dot:"dot-mem"  },
+  { id:"str",  label:"Strings",         dot:"dot-str"  },
+  { id:"cond", label:"Conditionals",    dot:"dot-cond" },
+  { id:"data", label:"Data Structures", dot:"dot-data" },
+  { id:"func", label:"Functions",       dot:"dot-func" },
+  { id:"t2",   label:"Tier 2",          dot:"dot-t2"   },
+  { id:"algo", label:"Algorithms",      dot:"dot-algo" },
 ];
 
-const baseData = [
+const pyCats = [
+  { id:"all",            label:"All",            dot:"dot-func"              },
+  { id:"strings",        label:"Strings",        dot:"dot-py-strings"        },
+  { id:"lists",          label:"Lists",          dot:"dot-py-lists"          },
+  { id:"dicts",          label:"Dicts",          dot:"dot-py-dicts"          },
+  { id:"control",        label:"Control",        dot:"dot-py-control"        },
+  { id:"functions",      label:"Functions",      dot:"dot-py-functions"      },
+  { id:"comprehensions", label:"Comprehensions", dot:"dot-py-comprehensions" },
+  { id:"classes",        label:"Classes",        dot:"dot-py-classes"        },
+  { id:"builtins",       label:"Builtins",       dot:"dot-py-builtins"       },
+  { id:"io",             label:"I/O",            dot:"dot-py-io"             },
+  { id:"exceptions",     label:"Exceptions",     dot:"dot-py-exceptions"     },
+  { id:"async",          label:"Async",          dot:"dot-py-async"          },
+  { id:"stdlib",         label:"Stdlib",         dot:"dot-py-stdlib"         },
+  { id:"typing",         label:"Typing",         dot:"dot-py-typing"         },
+  { id:"debugging",      label:"Debugging",      dot:"dot-py-debugging"      },
+  { id:"numpy",          label:"NumPy",          dot:"dot-py-numpy"          },
+  { id:"pandas",         label:"Pandas",         dot:"dot-py-pandas"         },
+  { id:"functools",      label:"Functools",      dot:"dot-py-functools"      },
+  { id:"concurrency",    label:"Concurrency",    dot:"dot-py-concurrency"    },
+  { id:"networking",     label:"Networking",     dot:"dot-py-networking"     },
+  { id:"testing",        label:"Testing",        dot:"dot-py-testing"        },
+  { id:"torch",          label:"PyTorch",        dot:"dot-py-torch"          },
+  { id:"pydantic",       label:"Pydantic",       dot:"dot-py-pydantic"       },
+  { id:"text",           label:"Text",           dot:"dot-py-text"           },
+];
+
+// ── C++ DATA ─────────────────────────────────────────
+const cppData = [
   // I/O
   { cat:"io", title:"cin / cout", desc:"Read from stdin and write to stdout — the most common I/O pair.", code:
 `#include <iostream>
@@ -418,7 +543,6 @@ int main() {
     getline(cin, line);
     cout << "You said: " << line << "\\n";
 
-    // after cin>>, flush the newline first:
     int n;
     cin >> n;
     cin.ignore();
@@ -437,7 +561,6 @@ int main() {
     scanf("%lf", &d);
     printf("double: %.2f\\n", d);
 
-    // format specifiers:
     // %d int   %f float   %lf double
     // %c char  %s string  %ld long
     return 0;
@@ -450,7 +573,7 @@ int main() {
     int x = 42;
     cerr << "Error: file not found\\n"; // unbuffered stderr
     clog << "Debug: x = " << x << "\\n"; // buffered stderr
-    cout << "Normal output\\n";           // stdout
+    cout << "Normal output\\n";
     return 0;
 }` },
 
@@ -460,19 +583,16 @@ int main() {
 using namespace std;
 
 int main() {
-    // forward
     for (int i = 0; i < 5; i++) {
         cout << i << " "; // 0 1 2 3 4
     }
     cout << "\\n";
 
-    // reverse
     for (int i = 4; i >= 0; i--) {
         cout << i << " "; // 4 3 2 1 0
     }
     cout << "\\n";
 
-    // step by 2
     for (int i = 0; i < 10; i += 2) {
         cout << i << " "; // 0 2 4 6 8
     }
@@ -489,7 +609,6 @@ int main() {
     }
     cout << x << "\\n"; // 128
 
-    // read until EOF (Ctrl+D / Ctrl+Z to stop):
     int val, sum = 0;
     while (cin >> val) {
         sum += val;
@@ -519,13 +638,11 @@ using namespace std;
 int main() {
     vector<int> v = {1, 2, 3, 4, 5};
 
-    // read-only
     for (int x : v) {
         cout << x << " "; // 1 2 3 4 5
     }
     cout << "\\n";
 
-    // modify elements — use reference:
     for (int& x : v) {
         x *= 2;
     }
@@ -540,9 +657,9 @@ using namespace std;
 
 int main() {
     for (int i = 0; i < 10; i++) {
-        if (i == 7) break;         // stop at 7
-        if (i % 2 == 0) continue;  // skip even numbers
-        cout << i << " "; // prints 1 3 5
+        if (i == 7) break;
+        if (i % 2 == 0) continue;
+        cout << i << " "; // 1 3 5
     }
     cout << "\\n";
     return 0;
@@ -556,13 +673,11 @@ int main() {
 using namespace std;
 
 int main() {
-    // write to file
     ofstream out("out.txt");
     out << "hello world\\n";
     out << "line two\\n";
     out.close();
 
-    // read line by line
     ifstream in("out.txt");
     string line;
     while (getline(in, line)) {
@@ -575,7 +690,7 @@ int main() {
 `#include <cstdio>
 
 int main() {
-    FILE* f = fopen("data.txt", "r"); // r w a rb wb
+    FILE* f = fopen("data.txt", "r");
     if (!f) {
         printf("Error: could not open file\\n");
         return 1;
@@ -631,17 +746,14 @@ int main() {
 using namespace std;
 
 int main() {
-    // truncate (overwrite)
     ofstream f1("file.txt");
     f1 << "fresh start\\n";
     f1.close();
 
-    // append — keeps existing content
     ofstream f2("file.txt", ios::app);
     f2 << "appended line\\n";
     f2.close();
 
-    // fopen modes:
     // "r"  read text      "rb" read binary
     // "w"  write (trunc)  "a"  append
     // "r+" read+write     "w+" write+read
@@ -654,15 +766,15 @@ int main() {
 using namespace std;
 
 int main() {
-    int* p = new int(42);    // single int
-    cout << *p << "\\n";     // 42
+    int* p = new int(42);
+    cout << *p << "\\n"; // 42
     delete p;
 
     int* arr = new int[5]{1,2,3,4,5};
     for (int i = 0; i < 5; i++)
         cout << arr[i] << " ";
     cout << "\\n";
-    delete[] arr;            // note []
+    delete[] arr;
     return 0;
 }` },
   { cat:"mem", title:"malloc / free (C)", desc:"C-style raw memory allocation — no constructors called.", code:
@@ -674,7 +786,7 @@ int main() {
     int* p = (int*)malloc(sizeof(int) * 5);
     if (!p) { printf("alloc failed\\n"); return 1; }
 
-    memset(p, 0, sizeof(int) * 5); // zero out
+    memset(p, 0, sizeof(int) * 5);
     p[2] = 99;
     printf("%d\\n", p[2]); // 99
     free(p);
@@ -688,7 +800,6 @@ using namespace std;
 int main() {
     auto p = make_unique<int>(42);
     cout << *p << "\\n"; // 42
-    // freed automatically when p goes out of scope
 
     auto arr = make_unique<int[]>(5);
     arr[0] = 10;
@@ -703,10 +814,10 @@ using namespace std;
 
 int main() {
     auto p1 = make_shared<int>(42);
-    auto p2 = p1;  // both own the int
-    cout << *p1 << "\\n";         // 42
+    auto p2 = p1;
+    cout << *p1 << "\\n";          // 42
     cout << p1.use_count() << "\\n"; // 2
-    p1.reset(); // p1 releases ownership
+    p1.reset();
     cout << p2.use_count() << "\\n"; // 1
     return 0;
 }` },
@@ -717,11 +828,11 @@ int main() {
 int main() {
     char src[] = "hello";
     char dst[6];
-    memcpy(dst, src, 6);          // copy 6 bytes
-    printf("copied: %s\\n", dst); // hello
+    memcpy(dst, src, 6);
+    printf("copied: %s\\n", dst);
 
-    memset(dst, 0, sizeof(dst));  // fill with zeros
-    printf("cleared: %s\\n", dst); // (empty)
+    memset(dst, 0, sizeof(dst));
+    printf("cleared: %s\\n", dst);
     return 0;
 }` },
 
@@ -747,13 +858,11 @@ int main() {
 using namespace std;
 
 int main() {
-    // string to number
     int n    = stoi("42");
     double d = stod("3.14");
     long l   = stol("999999");
     cout << n << " " << d << " " << l << "\\n";
 
-    // number to string
     string s = to_string(42);
     string f = to_string(3.14);
     cout << s << " " << f << "\\n";
@@ -777,7 +886,7 @@ int main() {
     }
 
     for (const string& p : parts) {
-        cout << p << "\\n"; // apple / banana / cherry
+        cout << p << "\\n";
     }
     return 0;
 }` },
@@ -788,7 +897,7 @@ using namespace std;
 
 int main() {
     char c = 'A';
-    cout << isalpha(c) << "\\n";  // 1 (true)
+    cout << isalpha(c) << "\\n";  // 1
     cout << isdigit('3') << "\\n"; // 1
     cout << isupper(c) << "\\n";  // 1
     cout << (char)tolower(c) << "\\n"; // a
@@ -805,11 +914,11 @@ int main() {
     printf("len: %zu\\n", strlen(s)); // 5
 
     char dst[20];
-    strcpy(dst, s);           // copy
-    strcat(dst, " world");    // concatenate
-    printf("%s\\n", dst);     // hello world
+    strcpy(dst, s);
+    strcat(dst, " world");
+    printf("%s\\n", dst); // hello world
 
-    printf("%d\\n", strcmp("abc", "abc")); // 0 = equal
+    printf("%d\\n", strcmp("abc", "abc")); // 0
     printf("%d\\n", strcmp("b", "a"));     // positive
     return 0;
 }` },
@@ -820,12 +929,9 @@ using namespace std;
 
 int main() {
     string s = "hello world";
-
-    // replace at position, length, new string:
     s.replace(6, 5, "C++");
     cout << s << "\\n"; // hello C++
 
-    // replace all occurrences of 'l' with 'L':
     string t = "hello world";
     size_t pos;
     while ((pos = t.find("l")) != string::npos)
@@ -890,15 +996,12 @@ int main() {
     int x = 50;
     bool done = false;
 
-    // AND: both must be true
     if (x > 0 && x < 100)
         cout << "in range\\n";
 
-    // OR: at least one true
     if (x == 0 || x == 50)
         cout << "is 0 or 50\\n";
 
-    // NOT: invert
     if (!done)
         cout << "not done yet\\n";
 
@@ -918,13 +1021,12 @@ int main() {
     v.push_back(10);
     v.push_back(20);
 
-    cout << v.size() << "\\n";  // 3
-    cout << v[0] << "\\n";     // 30
-    sort(v.begin(), v.end());  // sort in-place
+    cout << v.size() << "\\n"; // 3
+    sort(v.begin(), v.end());
     for (int x : v)
-        cout << x << " ";     // 10 20 30
+        cout << x << " "; // 10 20 30
     cout << "\\n";
-    v.pop_back();              // remove last
+    v.pop_back();
     cout << v.size() << "\\n"; // 2
     return 0;
 }` },
@@ -940,7 +1042,7 @@ int main() {
     freq["apple"]++;
     freq["banana"]++;
 
-    cout << freq["apple"] << "\\n";   // 2
+    cout << freq["apple"] << "\\n";       // 2
     cout << freq.count("banana") << "\\n"; // 1
     freq.erase("banana");
 
@@ -959,13 +1061,13 @@ int main() {
     m["key"] = 42;
     m["other"] = 7;
 
-    cout << m["key"] << "\\n";        // 42
-    cout << m.count("key") << "\\n";  // 1
+    cout << m["key"] << "\\n";       // 42
+    cout << m.count("key") << "\\n"; // 1
     cout << m.count("nope") << "\\n"; // 0
 
     auto it = m.find("other");
     if (it != m.end())
-        cout << it->second << "\\n";  // 7
+        cout << it->second << "\\n"; // 7
     return 0;
 }` },
   { cat:"data", title:"set / unordered_set", desc:"Ordered unique elements (set) or O(1) hash version.", code:
@@ -976,9 +1078,7 @@ using namespace std;
 
 int main() {
     set<int> s;
-    s.insert(5);
-    s.insert(3);
-    s.insert(5); // duplicate — ignored
+    s.insert(5); s.insert(3); s.insert(5);
     cout << s.size() << "\\n";   // 2
     cout << s.count(5) << "\\n"; // 1
     for (int x : s) cout << x << " "; // 3 5
@@ -998,13 +1098,13 @@ using namespace std;
 int main() {
     stack<int> st;
     st.push(1); st.push(2); st.push(3);
-    cout << st.top() << "\\n"; // 3 (last in)
+    cout << st.top() << "\\n"; // 3
     st.pop();
     cout << st.top() << "\\n"; // 2
 
     queue<int> q;
     q.push(1); q.push(2); q.push(3);
-    cout << q.front() << "\\n"; // 1 (first in)
+    cout << q.front() << "\\n"; // 1
     q.pop();
     cout << q.front() << "\\n"; // 2
     return 0;
@@ -1016,14 +1116,13 @@ int main() {
 using namespace std;
 
 int main() {
-    priority_queue<int> pq; // max-heap
+    priority_queue<int> pq;
     pq.push(3); pq.push(1); pq.push(5);
     cout << pq.top() << "\\n"; // 5
     pq.pop();
     cout << pq.top() << "\\n"; // 3
 
-    // min-heap:
-    priority_queue<int, vector<int>, greater<int>> minpq;
+    priority_queue<int,vector<int>,greater<int>> minpq;
     minpq.push(3); minpq.push(1); minpq.push(5);
     cout << minpq.top() << "\\n"; // 1
     return 0;
@@ -1034,12 +1133,10 @@ int main() {
 using namespace std;
 
 int main() {
-    // C-style array
     int arr[5] = {1,2,3,4,5};
     int n = sizeof(arr)/sizeof(arr[0]); // 5
     cout << arr[2] << "\\n"; // 3
 
-    // C++11 std::array — bounds-safe:
     array<int,5> a = {10,20,30,40,50};
     cout << a.size() << "\\n"; // 5
     cout << a.at(2) << "\\n";  // 30
@@ -1054,15 +1151,14 @@ using namespace std;
 
 int main() {
     pair<int,string> p = {1, "hello"};
-    cout << p.first << " " << p.second << "\\n"; // 1 hello
+    cout << p.first << " " << p.second << "\\n";
 
     auto t = make_tuple(42, 3.14, "world");
     cout << get<0>(t) << "\\n"; // 42
     cout << get<2>(t) << "\\n"; // world
 
-    // C++17 structured binding:
-    auto [a, b, c] = t;
-    cout << a << " " << c << "\\n"; // 42 world
+    auto [a, b, c] = t; // C++17
+    cout << a << " " << c << "\\n";
     return 0;
 }` },
 
@@ -1092,10 +1188,10 @@ int main() {
 using namespace std;
 
 void doubleIt(int& x) {
-    x *= 2; // modifies original
+    x *= 2;
 }
 
-void printMsg(const string& s) { // read-only, no copy
+void printMsg(const string& s) {
     cout << s << "\\n";
 }
 
@@ -1117,12 +1213,10 @@ int main() {
     auto square = [](int x) { return x * x; };
     cout << square(5) << "\\n"; // 25
 
-    // capture outer variable:
     int factor = 3;
     auto mult = [factor](int x) { return x * factor; };
     cout << mult(4) << "\\n"; // 12
 
-    // descending sort:
     vector<int> v = {3,1,4,1,5,9};
     sort(v.begin(), v.end(), [](int a, int b){ return a > b; });
     for (int x : v) cout << x << " "; // 9 5 4 3 1 1
@@ -1133,8 +1227,8 @@ int main() {
 using namespace std;
 
 int factorial(int n) {
-    if (n <= 1) return 1;          // base case
-    return n * factorial(n - 1);   // recurse
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
 }
 
 int fib(int n) {
@@ -1158,7 +1252,7 @@ string add(string a, string b) { return a + b; }
 
 int main() {
     cout << add(1, 2) << "\\n";           // 3
-    cout << add(1.5, 2.5) << "\\n";       // 4.0
+    cout << add(1.5, 2.5) << "\\n";       // 4
     cout << add("hi ", "there") << "\\n"; // hi there
     return 0;
 }` },
@@ -1173,15 +1267,13 @@ T maxVal(T a, T b) {
 }
 
 int main() {
-    cout << maxVal(3, 7) << "\\n";          // 7
-    cout << maxVal(3.14, 2.71) << "\\n";    // 3.14
+    cout << maxVal(3, 7) << "\\n";
+    cout << maxVal(3.14, 2.71) << "\\n";
     cout << maxVal(string("a"), string("z")) << "\\n"; // z
     return 0;
 }` },
-];
 
-// ── Tier 2 Essentials ──────────────────────────────────────────
-const t2Data = [
+  // Tier 2
   { cat:"t2", title:"try / catch / throw", desc:"Handle runtime errors gracefully instead of crashing.", code:
 `#include <iostream>
 #include <stdexcept>
@@ -1199,7 +1291,7 @@ int main() {
     } catch (const runtime_error& e) {
         cout << "Error: " << e.what() << "\\n";
     } catch (...) {
-        cout << "Unknown error\\n"; // catch-all
+        cout << "Unknown error\\n";
     }
     return 0;
 }` },
@@ -1224,8 +1316,8 @@ int main() {
     p2.name = "Alice";
     p2.age = 30;
 
-    printPerson(p1); // Sheikh age 25
-    printPerson(p2); // Alice age 30
+    printPerson(p1);
+    printPerson(p2);
     return 0;
 }` },
   { cat:"t2", title:"class basics", desc:"Bundle data and functions together — the core of OOP.", code:
@@ -1238,7 +1330,7 @@ public:
     string name;
     int age;
 
-    Dog(string n, int a) : name(n), age(a) {} // constructor
+    Dog(string n, int a) : name(n), age(a) {}
 
     void bark() {
         cout << name << " says: Woof!\\n";
@@ -1251,8 +1343,8 @@ public:
 
 int main() {
     Dog d("Rex", 3);
-    d.bark();                          // Rex says: Woof!
-    cout << d.humanAge() << "\\n";     // 21
+    d.bark();
+    cout << d.humanAge() << "\\n"; // 21
     return 0;
 }` },
   { cat:"t2", title:"pointers", desc:"Store memory addresses — foundation of dynamic data structures.", code:
@@ -1261,16 +1353,16 @@ using namespace std;
 
 int main() {
     int x = 42;
-    int* p = &x;       // p holds address of x
+    int* p = &x;
 
-    cout << x << "\\n";  // 42  — the value
-    cout << p << "\\n";  // 0x... — the address
-    cout << *p << "\\n"; // 42  — dereference: value at address
+    cout << x << "\\n";  // 42
+    cout << p << "\\n";  // address
+    cout << *p << "\\n"; // 42
 
-    *p = 100;            // modify x via pointer
-    cout << x << "\\n";  // 100
+    *p = 100;
+    cout << x << "\\n"; // 100
 
-    int* null_p = nullptr; // always init to nullptr if unused
+    int* null_p = nullptr;
     return 0;
 }` },
   { cat:"t2", title:"2D vector (matrix)", desc:"Grid or matrix — vector of vectors.", code:
@@ -1279,7 +1371,6 @@ int main() {
 using namespace std;
 
 int main() {
-    // 3x3 matrix filled with 0
     int rows = 3, cols = 3;
     vector<vector<int>> grid(rows, vector<int>(cols, 0));
 
@@ -1287,16 +1378,12 @@ int main() {
     grid[1][1] = 5;
     grid[2][2] = 9;
 
-    // print
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
             cout << grid[i][j] << " ";
         }
         cout << "\\n";
     }
-    // 1 0 0
-    // 0 5 0
-    // 0 0 9
     return 0;
 }` },
   { cat:"t2", title:"math functions", desc:"Common math operations from <cmath> and <algorithm>.", code:
@@ -1313,11 +1400,8 @@ int main() {
     cout << floor(3.8) << "\\n";     // 3
     cout << round(3.5) << "\\n";     // 4
     cout << log(M_E) << "\\n";       // 1
-    cout << log2(8.0) << "\\n";      // 3
-
     cout << min(3, 7) << "\\n";      // 3
     cout << max(3, 7) << "\\n";      // 7
-    cout << min({1,5,2,8,3}) << "\\n"; // 1
     return 0;
 }` },
   { cat:"t2", title:"algorithm utilities", desc:"Powerful STL tools from <algorithm> — no need to implement yourself.", code:
@@ -1329,21 +1413,17 @@ using namespace std;
 int main() {
     vector<int> v = {3,1,4,1,5,9,2,6};
 
-    sort(v.begin(), v.end());         // ascending
-    reverse(v.begin(), v.end());      // flip it
-
-    // binary search (vector must be sorted first)
     sort(v.begin(), v.end());
-    bool found = binary_search(v.begin(), v.end(), 5); // true
+    reverse(v.begin(), v.end());
 
-    // count occurrences
-    int cnt = count(v.begin(), v.end(), 1); // 2
+    sort(v.begin(), v.end());
+    bool found = binary_search(v.begin(), v.end(), 5);
 
-    // find first match
+    int cnt = count(v.begin(), v.end(), 1);
     auto it = find(v.begin(), v.end(), 9);
-    if (it != v.end()) cout << "found at index " << (it - v.begin()) << "\\n";
+    if (it != v.end())
+        cout << "found at " << (it - v.begin()) << "\\n";
 
-    // fill with value
     fill(v.begin(), v.end(), 0);
     return 0;
 }` },
@@ -1354,13 +1434,11 @@ int main() {
 using namespace std;
 
 int main() {
-    // build a string with mixed types (like sprintf)
     ostringstream oss;
     oss << "Name: " << "Sheikh" << ", Age: " << 25;
     string result = oss.str();
-    cout << result << "\\n"; // Name: Sheikh, Age: 25
+    cout << result << "\\n";
 
-    // parse a string of numbers
     istringstream iss("10 20 30 40");
     int x;
     while (iss >> x) {
@@ -1373,9 +1451,8 @@ int main() {
 `#include <iostream>
 using namespace std;
 
-enum Direction { NORTH, SOUTH, EAST, WEST }; // 0,1,2,3
-
-enum class Color { RED, GREEN, BLUE }; // C++11 scoped enum (safer)
+enum Direction { NORTH, SOUTH, EAST, WEST };
+enum class Color { RED, GREEN, BLUE };
 
 int main() {
     Direction d = NORTH;
@@ -1384,7 +1461,6 @@ int main() {
     Color c = Color::RED;
     if (c == Color::RED) cout << "Red\\n";
 
-    // switch on enum:
     switch (d) {
         case NORTH: cout << "N\\n"; break;
         case SOUTH: cout << "S\\n"; break;
@@ -1398,13 +1474,11 @@ int main() {
 #include <map>
 using namespace std;
 
-// C++11 style (preferred)
 using vi = vector<int>;
 using vvi = vector<vector<int>>;
 using pii = pair<int,int>;
 using Graph = map<int, vector<int>>;
 
-// old C style
 typedef long long ll;
 
 int main() {
@@ -1413,24 +1487,21 @@ int main() {
     pii point = {3, 4};
     ll big = 1000000000LL * 1000;
 
-    cout << point.first << "," << point.second << "\\n"; // 3,4
+    cout << point.first << "," << point.second << "\\n";
     cout << big << "\\n";
     return 0;
 }` },
-];
 
-// ── Algorithms ─────────────────────────────────────────────────
-const algoData = [
+  // Algorithms
   { cat:"algo", title:"binary search", desc:"Find a value in a sorted array in O(log n) — much faster than linear scan.", code:
 `#include <iostream>
 #include <vector>
 using namespace std;
 
-// returns index of target, or -1 if not found
 int binarySearch(vector<int>& arr, int target) {
     int lo = 0, hi = arr.size() - 1;
     while (lo <= hi) {
-        int mid = lo + (hi - lo) / 2; // avoids overflow
+        int mid = lo + (hi - lo) / 2;
         if (arr[mid] == target) return mid;
         else if (arr[mid] < target) lo = mid + 1;
         else hi = mid - 1;
@@ -1442,7 +1513,6 @@ int main() {
     vector<int> v = {1, 3, 5, 7, 9, 11, 13};
     cout << binarySearch(v, 7)  << "\\n"; // 3
     cout << binarySearch(v, 6)  << "\\n"; // -1
-    cout << binarySearch(v, 13) << "\\n"; // 6
     return 0;
 }` },
   { cat:"algo", title:"bubble sort", desc:"Simple O(n²) sort — great for learning, too slow for large data.", code:
@@ -1460,14 +1530,14 @@ void bubbleSort(vector<int>& arr) {
                 swapped = true;
             }
         }
-        if (!swapped) break; // already sorted
+        if (!swapped) break;
     }
 }
 
 int main() {
-    vector<int> v = {64, 34, 25, 12, 22, 11, 90};
+    vector<int> v = {64,34,25,12,22,11,90};
     bubbleSort(v);
-    for (int x : v) cout << x << " "; // 11 12 22 25 34 64 90
+    for (int x : v) cout << x << " ";
     return 0;
 }` },
   { cat:"algo", title:"merge sort", desc:"Divide-and-conquer O(n log n) sort — fast and stable.", code:
@@ -1479,10 +1549,10 @@ void merge(vector<int>& arr, int l, int m, int r) {
     vector<int> left(arr.begin()+l, arr.begin()+m+1);
     vector<int> right(arr.begin()+m+1, arr.begin()+r+1);
     int i=0, j=0, k=l;
-    while (i<left.size() && j<right.size())
+    while (i<(int)left.size() && j<(int)right.size())
         arr[k++] = (left[i]<=right[j]) ? left[i++] : right[j++];
-    while (i<left.size())  arr[k++] = left[i++];
-    while (j<right.size()) arr[k++] = right[j++];
+    while (i<(int)left.size())  arr[k++] = left[i++];
+    while (j<(int)right.size()) arr[k++] = right[j++];
 }
 
 void mergeSort(vector<int>& arr, int l, int r) {
@@ -1494,9 +1564,9 @@ void mergeSort(vector<int>& arr, int l, int r) {
 }
 
 int main() {
-    vector<int> v = {38, 27, 43, 3, 9, 82, 10};
+    vector<int> v = {38,27,43,3,9,82,10};
     mergeSort(v, 0, v.size()-1);
-    for (int x : v) cout << x << " "; // 3 9 10 27 38 43 82
+    for (int x : v) cout << x << " ";
     return 0;
 }` },
   { cat:"algo", title:"linear search", desc:"Scan every element — O(n). Works on unsorted data.", code:
@@ -1505,10 +1575,10 @@ int main() {
 using namespace std;
 
 int linearSearch(const vector<int>& arr, int target) {
-    for (int i = 0; i < arr.size(); i++) {
+    for (int i = 0; i < (int)arr.size(); i++) {
         if (arr[i] == target) return i;
     }
-    return -1; // not found
+    return -1;
 }
 
 int main() {
@@ -1523,7 +1593,6 @@ int main() {
 #include <string>
 using namespace std;
 
-// check if array has a pair that sums to target (sorted input)
 bool hasPairSum(vector<int>& arr, int target) {
     int lo = 0, hi = arr.size() - 1;
     while (lo < hi) {
@@ -1535,7 +1604,6 @@ bool hasPairSum(vector<int>& arr, int target) {
     return false;
 }
 
-// check palindrome
 bool isPalindrome(const string& s) {
     int lo = 0, hi = s.size() - 1;
     while (lo < hi) {
@@ -1547,9 +1615,8 @@ bool isPalindrome(const string& s) {
 
 int main() {
     vector<int> v = {1, 2, 3, 4, 6};
-    cout << hasPairSum(v, 6) << "\\n"; // 1 (true)
+    cout << hasPairSum(v, 6) << "\\n";      // 1
     cout << isPalindrome("racecar") << "\\n"; // 1
-    cout << isPalindrome("hello") << "\\n";   // 0
     return 0;
 }` },
   { cat:"algo", title:"sliding window", desc:"Maintain a window over an array — O(n). Great for subarray/substring problems.", code:
@@ -1557,20 +1624,16 @@ int main() {
 #include <vector>
 using namespace std;
 
-// max sum of subarray of size k
 int maxSumWindow(vector<int>& arr, int k) {
     int n = arr.size();
     if (n < k) return -1;
 
-    // sum first window
     int windowSum = 0;
     for (int i = 0; i < k; i++) windowSum += arr[i];
 
     int maxSum = windowSum;
-
-    // slide the window
     for (int i = k; i < n; i++) {
-        windowSum += arr[i] - arr[i - k]; // add new, remove old
+        windowSum += arr[i] - arr[i - k];
         maxSum = max(maxSum, windowSum);
     }
     return maxSum;
@@ -1578,24 +1641,18 @@ int maxSumWindow(vector<int>& arr, int k) {
 
 int main() {
     vector<int> v = {2, 1, 5, 1, 3, 2};
-    cout << maxSumWindow(v, 3) << "\\n"; // 9 (5+1+3)
-    cout << maxSumWindow(v, 2) << "\\n"; // 6 (5+1)
+    cout << maxSumWindow(v, 3) << "\\n"; // 9
+    cout << maxSumWindow(v, 2) << "\\n"; // 6
     return 0;
 }` },
-  { cat:"algo", title:"depth-first search (DFS)", desc:"Explore a graph/tree as deep as possible before backtracking — uses recursion or stack.", code:
+  { cat:"algo", title:"depth-first search (DFS)", desc:"Explore a graph/tree as deep as possible before backtracking.", code:
 `#include <iostream>
 #include <vector>
 using namespace std;
 
-// adjacency list graph
 vector<vector<int>> graph = {
-    {1, 2},    // node 0 connects to 1,2
-    {0, 3, 4}, // node 1 connects to 0,3,4
-    {0},       // node 2 connects to 0
-    {1},       // node 3 connects to 1
-    {1}        // node 4 connects to 1
+    {1, 2}, {0, 3, 4}, {0}, {1}, {1}
 };
-
 vector<bool> visited(5, false);
 
 void dfs(int node) {
@@ -1619,17 +1676,12 @@ int main() {
 using namespace std;
 
 vector<vector<int>> graph = {
-    {1, 2},
-    {0, 3, 4},
-    {0},
-    {1},
-    {1}
+    {1,2},{0,3,4},{0},{1},{1}
 };
 
 void bfs(int start) {
     vector<bool> visited(5, false);
     queue<int> q;
-
     visited[start] = true;
     q.push(start);
 
@@ -1656,11 +1708,11 @@ int main() {
 #include <vector>
 using namespace std;
 
-vector<int> memo(100, -1); // -1 means not computed yet
+vector<int> memo(100, -1);
 
 int fib(int n) {
     if (n <= 1) return n;
-    if (memo[n] != -1) return memo[n]; // already computed!
+    if (memo[n] != -1) return memo[n];
     memo[n] = fib(n-1) + fib(n-2);
     return memo[n];
 }
@@ -1669,7 +1721,7 @@ int main() {
     for (int i = 0; i <= 10; i++)
         cout << fib(i) << " "; // 0 1 1 2 3 5 8 13 21 34 55
     cout << "\\n";
-    cout << fib(40) << "\\n"; // 102334155 — fast!
+    cout << fib(40) << "\\n"; // 102334155
     return 0;
 }` },
   { cat:"algo", title:"dynamic programming (DP)", desc:"Build solution from smaller subproblems — bottom-up approach.", code:
@@ -1677,26 +1729,24 @@ int main() {
 #include <vector>
 using namespace std;
 
-// Classic: 0/1 knapsack — max value with weight limit
-int knapsack(vector<int>& weights, vector<int>& values, int capacity) {
+int knapsack(vector<int>& weights, vector<int>& values, int cap) {
     int n = weights.size();
-    vector<vector<int>> dp(n+1, vector<int>(capacity+1, 0));
+    vector<vector<int>> dp(n+1, vector<int>(cap+1, 0));
 
     for (int i = 1; i <= n; i++) {
-        for (int w = 0; w <= capacity; w++) {
-            dp[i][w] = dp[i-1][w]; // don't take item i
+        for (int w = 0; w <= cap; w++) {
+            dp[i][w] = dp[i-1][w];
             if (weights[i-1] <= w)
                 dp[i][w] = max(dp[i][w],
-                    dp[i-1][w-weights[i-1]] + values[i-1]); // take it
+                    dp[i-1][w-weights[i-1]] + values[i-1]);
         }
     }
-    return dp[n][capacity];
+    return dp[n][cap];
 }
 
 int main() {
-    vector<int> weights = {1, 3, 4, 5};
-    vector<int> values  = {1, 4, 5, 7};
-    cout << knapsack(weights, values, 7) << "\\n"; // 9
+    vector<int> w = {1,3,4,5}, v = {1,4,5,7};
+    cout << knapsack(w, v, 7) << "\\n"; // 9
     return 0;
 }` },
   { cat:"algo", title:"longest common subsequence", desc:"Classic DP — find longest sequence present in both strings.", code:
@@ -1709,20 +1759,17 @@ int lcs(const string& a, const string& b) {
     int m = a.size(), n = b.size();
     vector<vector<int>> dp(m+1, vector<int>(n+1, 0));
 
-    for (int i = 1; i <= m; i++) {
+    for (int i = 1; i <= m; i++)
         for (int j = 1; j <= n; j++) {
-            if (a[i-1] == b[j-1])
-                dp[i][j] = dp[i-1][j-1] + 1;
-            else
-                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+            if (a[i-1] == b[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+            else dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
         }
-    }
     return dp[m][n];
 }
 
 int main() {
-    cout << lcs("ABCBDAB", "BDCABA") << "\\n"; // 4 (BCBA)
-    cout << lcs("AGGTAB", "GXTXAYB") << "\\n"; // 4 (GTAB)
+    cout << lcs("ABCBDAB", "BDCABA") << "\\n"; // 4
+    cout << lcs("AGGTAB",  "GXTXAYB") << "\\n"; // 4
     return 0;
 }` },
   { cat:"algo", title:"frequency counter", desc:"Count occurrences of elements — O(n). Core pattern for many problems.", code:
@@ -1733,20 +1780,17 @@ int main() {
 using namespace std;
 
 int main() {
-    // count word frequency
     vector<string> words = {"apple","banana","apple","cherry","banana","apple"};
     unordered_map<string,int> freq;
     for (const string& w : words) freq[w]++;
 
     for (auto& [word, count] : freq)
         cout << word << ": " << count << "\\n";
-    // apple: 3  banana: 2  cherry: 1
 
-    // find most frequent
     string most; int maxCnt = 0;
     for (auto& [w, c] : freq)
         if (c > maxCnt) { maxCnt = c; most = w; }
-    cout << "Most frequent: " << most << "\\n"; // apple
+    cout << "Most frequent: " << most << "\\n";
     return 0;
 }` },
   { cat:"algo", title:"prefix sum", desc:"Precompute cumulative sums for O(1) range sum queries.", code:
@@ -1758,50 +1802,43 @@ int main() {
     vector<int> arr = {3, 1, 4, 1, 5, 9, 2, 6};
     int n = arr.size();
 
-    // build prefix sum array
     vector<int> prefix(n+1, 0);
     for (int i = 0; i < n; i++)
         prefix[i+1] = prefix[i] + arr[i];
 
-    // sum from index l to r (inclusive) in O(1):
     auto rangeSum = [&](int l, int r) {
         return prefix[r+1] - prefix[l];
     };
 
-    cout << rangeSum(0, 3) << "\\n"; // 9  (3+1+4+1)
-    cout << rangeSum(2, 6) << "\\n"; // 22 (4+1+5+9+2)
-    cout << rangeSum(1, 5) << "\\n"; // 20 (1+4+1+5+9)
+    cout << rangeSum(0, 3) << "\\n"; // 9
+    cout << rangeSum(2, 6) << "\\n"; // 22
     return 0;
 }` },
-  { cat:"algo", title:"GCD / LCM", desc:"Greatest common divisor and least common multiple — from <numeric> in C++17 or implement with Euclid.", code:
+  { cat:"algo", title:"GCD / LCM", desc:"Greatest common divisor and least common multiple.", code:
 `#include <iostream>
 #include <numeric>
 using namespace std;
 
-// Euclid's algorithm (manual)
 int gcd(int a, int b) {
     while (b) { a %= b; swap(a, b); }
     return a;
 }
 
 int lcm(int a, int b) {
-    return a / gcd(a, b) * b; // divide first avoids overflow
+    return a / gcd(a, b) * b;
 }
 
 int main() {
     cout << gcd(48, 18) << "\\n"; // 6
     cout << lcm(4, 6) << "\\n";   // 12
-
-    // C++17 built-in:
     cout << __gcd(48, 18) << "\\n"; // 6
     return 0;
 }` },
-  { cat:"algo", title:"prime check / sieve", desc:"Check if a number is prime, or find all primes up to N with Sieve of Eratosthenes.", code:
+  { cat:"algo", title:"prime check / sieve", desc:"Check if a number is prime, or find all primes up to N.", code:
 `#include <iostream>
 #include <vector>
 using namespace std;
 
-// O(sqrt(n)) primality check
 bool isPrime(int n) {
     if (n < 2) return false;
     for (int i = 2; i * i <= n; i++)
@@ -1809,7 +1846,6 @@ bool isPrime(int n) {
     return true;
 }
 
-// Sieve of Eratosthenes — all primes up to N in O(N log log N)
 vector<bool> sieve(int N) {
     vector<bool> is_prime(N+1, true);
     is_prime[0] = is_prime[1] = false;
@@ -1822,42 +1858,1277 @@ vector<bool> sieve(int N) {
 
 int main() {
     cout << isPrime(17) << "\\n"; // 1
-    cout << isPrime(18) << "\\n"; // 0
 
     auto primes = sieve(30);
     for (int i = 2; i <= 30; i++)
-        if (primes[i]) cout << i << " "; // 2 3 5 7 11 13 17 19 23 29
+        if (primes[i]) cout << i << " ";
     return 0;
 }` },
 ];
 
-const data = [...baseData, ...t2Data, ...algoData];
-let activeFilter = "all";
-const openCards = new Set();
+// ── Python DATA ───────────────────────────────────────
+const pyData = [
+  // STRINGS
+  { cat:"strings", title:"String Methods", desc:"Common string operations and methods.", code:
+`s = <span class="str">"hello world"</span>
+s.upper()          <span class="cm"># "HELLO WORLD"</span>
+s.lower()          <span class="cm"># "hello world"</span>
+s.strip()          <span class="cm"># remove whitespace</span>
+s.replace(<span class="str">"l"</span>, <span class="str">"r"</span>)  <span class="cm"># "herro worrd"</span>
+s.split(<span class="str">" "</span>)       <span class="cm"># ["hello", "world"]</span>
+s.startswith(<span class="str">"h"</span>)  <span class="cm"># True</span>
+s.find(<span class="str">"world"</span>)    <span class="cm"># 6</span>
+<span class="fn">len</span>(s)             <span class="cm"># 11</span>` },
+  { cat:"strings", title:"f-strings", desc:"Format strings with expressions inline.", code:
+`name = <span class="str">"Sheikh"</span>
+score = <span class="num">42.567</span>
+
+<span class="fn">print</span>(<span class="str">f"Hello, {name}!"</span>)
+<span class="fn">print</span>(<span class="str">f"Score: {score:.2f}"</span>)  <span class="cm"># 42.57</span>
+<span class="fn">print</span>(<span class="str">f"{name!r}"</span>)           <span class="cm"># 'Sheikh'</span>
+<span class="fn">print</span>(<span class="str">f"{score:>10.1f}"</span>)     <span class="cm"># right-align</span>
+<span class="fn">print</span>(<span class="str">f"{2 ** 10 = }"</span>)       <span class="cm"># debug: 2**10=1024</span>` },
+  { cat:"strings", title:"String Slicing", desc:"Index and slice strings efficiently.", code:
+`s = <span class="str">"python"</span>
+s[<span class="num">0</span>]      <span class="cm"># 'p'</span>
+s[-<span class="num">1</span>]     <span class="cm"># 'n'</span>
+s[<span class="num">1</span>:<span class="num">4</span>]    <span class="cm"># 'yth'</span>
+s[:<span class="num">3</span>]     <span class="cm"># 'pyt'</span>
+s[<span class="num">3</span>:]     <span class="cm"># 'hon'</span>
+s[::-<span class="num">1</span>]   <span class="cm"># 'nohtyp' (reverse)</span>
+s[::<span class="num">2</span>]    <span class="cm"># 'pto' (every 2nd)</span>` },
+  { cat:"strings", title:"join & split", desc:"Convert between strings and lists.", code:
+`words = [<span class="str">"cat"</span>, <span class="str">"dog"</span>, <span class="str">"bird"</span>]
+
+<span class="cm"># join list → string</span>
+result = <span class="str">", "</span>.join(words)
+<span class="cm"># "cat, dog, bird"</span>
+
+<span class="cm"># split string → list</span>
+line = <span class="str">"a,b,c"</span>
+parts = line.split(<span class="str">","</span>)
+<span class="cm"># ["a", "b", "c"]</span>
+
+<span class="cm"># split with max splits</span>
+<span class="str">"a:b:c"</span>.split(<span class="str">":"</span>, <span class="num">1</span>)
+<span class="cm"># ["a", "b:c"]</span>` },
+
+  // LISTS
+  { cat:"lists", title:"List Operations", desc:"Core list manipulation methods.", code:
+`lst = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]
+
+lst.append(<span class="num">9</span>)        <span class="cm"># add to end</span>
+lst.insert(<span class="num">0</span>, <span class="num">99</span>)   <span class="cm"># insert at index</span>
+lst.pop()            <span class="cm"># remove &amp; return last</span>
+lst.pop(<span class="num">0</span>)          <span class="cm"># remove &amp; return index 0</span>
+lst.remove(<span class="num">1</span>)       <span class="cm"># remove first occurrence</span>
+lst.sort()           <span class="cm"># in-place sort</span>
+lst.reverse()        <span class="cm"># in-place reverse</span>
+lst.index(<span class="num">4</span>)        <span class="cm"># find index of value</span>
+lst.count(<span class="num">1</span>)        <span class="cm"># count occurrences</span>` },
+  { cat:"lists", title:"List Slicing & Copy", desc:"Slicing, copying, and unpacking lists.", code:
+`lst = [<span class="num">0</span>, <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
+
+lst[<span class="num">1</span>:<span class="num">3</span>]          <span class="cm"># [1, 2]</span>
+lst[-<span class="num">2</span>:]          <span class="cm"># [3, 4]</span>
+lst[::<span class="num">2</span>]          <span class="cm"># [0, 2, 4]</span>
+
+copy = lst[:]
+copy = lst.copy()
+
+a, b, *rest = lst
+<span class="cm"># a=0, b=1, rest=[2,3,4]</span>
+
+<span class="fn">list</span>(<span class="fn">zip</span>([<span class="num">1</span>,<span class="num">2</span>], [<span class="str">"a"</span>,<span class="str">"b"</span>]))
+<span class="cm"># [(1,'a'), (2,'b')]</span>` },
+  { cat:"lists", title:"Sorting", desc:"Sort lists with keys and custom logic.", code:
+`nums = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]
+
+<span class="fn">sorted</span>(nums)
+<span class="fn">sorted</span>(nums, reverse=<span class="bl">True</span>)
+
+words = [<span class="str">"banana"</span>, <span class="str">"fig"</span>, <span class="str">"apple"</span>]
+<span class="fn">sorted</span>(words, key=<span class="fn">len</span>)
+<span class="cm"># ['fig', 'apple', 'banana']</span>
+
+people = [{<span class="str">"age"</span>: <span class="num">30</span>}, {<span class="str">"age"</span>: <span class="num">25</span>}]
+<span class="fn">sorted</span>(people, key=<span class="kw">lambda</span> x: x[<span class="str">"age"</span>])` },
+
+  // DICTS
+  { cat:"dicts", title:"Dict Operations", desc:"Creating and manipulating dictionaries.", code:
+`d = {<span class="str">"name"</span>: <span class="str">"Munim"</span>, <span class="str">"age"</span>: <span class="num">25</span>}
+
+d[<span class="str">"city"</span>] = <span class="str">"Melbourne"</span>
+d.get(<span class="str">"age"</span>)            <span class="cm"># 25 (safe)</span>
+d.get(<span class="str">"x"</span>, <span class="num">0</span>)          <span class="cm"># 0 (default)</span>
+d.pop(<span class="str">"age"</span>)           <span class="cm"># removes &amp; returns</span>
+d.keys()                <span class="cm"># dict_keys([...])</span>
+d.values()              <span class="cm"># dict_values([...])</span>
+d.items()               <span class="cm"># dict_items([...])</span>
+d.update({<span class="str">"x"</span>: <span class="num">1</span>})     <span class="cm"># merge/update</span>
+<span class="str">"name"</span> <span class="kw">in</span> d           <span class="cm"># True</span>` },
+  { cat:"dicts", title:"Dict Merge & Unpack", desc:"Modern dict merging patterns.", code:
+`a = {<span class="str">"x"</span>: <span class="num">1</span>, <span class="str">"y"</span>: <span class="num">2</span>}
+b = {<span class="str">"y"</span>: <span class="num">99</span>, <span class="str">"z"</span>: <span class="num">3</span>}
+
+merged = a | b         <span class="cm"># Python 3.9+</span>
+<span class="cm"># {"x":1, "y":99, "z":3}</span>
+
+merged = {**a, **b}    <span class="cm"># unpack merge</span>
+
+d = {}
+d.setdefault(<span class="str">"count"</span>, <span class="num">0</span>)
+d[<span class="str">"count"</span>] += <span class="num">1</span>
+
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+dd = defaultdict(<span class="fn">list</span>)
+dd[<span class="str">"a"</span>].append(<span class="num">1</span>)` },
+
+  // CONTROL
+  { cat:"control", title:"for / while loops", desc:"Loop patterns including enumerate and range.", code:
+`<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>): ...        <span class="cm"># 0–4</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">6</span>): ...    <span class="cm"># 1–5</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0</span>, <span class="num">10</span>, <span class="num">2</span>): ... <span class="cm"># even</span>
+
+<span class="kw">for</span> i, val <span class="kw">in</span> <span class="fn">enumerate</span>(lst):
+    <span class="fn">print</span>(i, val)
+
+<span class="kw">while</span> <span class="bl">True</span>:
+    <span class="kw">if</span> done: <span class="kw">break</span>
+    <span class="kw">if</span> skip: <span class="kw">continue</span>` },
+  { cat:"control", title:"Conditionals", desc:"if/elif/else, ternary, and match-case.", code:
+`<span class="kw">if</span> x > <span class="num">0</span>:
+    <span class="fn">print</span>(<span class="str">"positive"</span>)
+<span class="kw">elif</span> x == <span class="num">0</span>:
+    <span class="fn">print</span>(<span class="str">"zero"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"negative"</span>)
+
+label = <span class="str">"pos"</span> <span class="kw">if</span> x > <span class="num">0</span> <span class="kw">else</span> <span class="str">"neg"</span>
+
+<span class="kw">match</span> command:
+    <span class="kw">case</span> <span class="str">"quit"</span>: quit()
+    <span class="kw">case</span> <span class="str">"go"</span>:  move()
+    <span class="kw">case</span> _:      <span class="fn">print</span>(<span class="str">"unknown"</span>)` },
+
+  // FUNCTIONS
+  { cat:"functions", title:"Function Basics", desc:"Defining functions with defaults and type hints.", code:
+`<span class="kw">def</span> <span class="fn">greet</span>(name: <span class="cl">str</span>, loud: <span class="cl">bool</span> = <span class="bl">False</span>) -> <span class="cl">str</span>:
+    msg = <span class="str">f"Hello, {name}"</span>
+    <span class="kw">return</span> msg.upper() <span class="kw">if</span> loud <span class="kw">else</span> msg
+
+<span class="kw">def</span> <span class="fn">add</span>(*nums):
+    <span class="kw">return</span> <span class="fn">sum</span>(nums)
+
+<span class="kw">def</span> <span class="fn">info</span>(**kwargs):
+    <span class="kw">for</span> k, v <span class="kw">in</span> kwargs.items():
+        <span class="fn">print</span>(<span class="str">f"{k}: {v}"</span>)
+
+square = <span class="kw">lambda</span> x: x ** <span class="num">2</span>` },
+  { cat:"functions", title:"Decorators", desc:"Common decorator patterns.", code:
+`<span class="kw">import</span> time
+<span class="kw">from</span> functools <span class="kw">import</span> wraps
+
+<span class="kw">def</span> <span class="fn">timer</span>(func):
+    @<span class="fn">wraps</span>(func)
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        t = time.time()
+        result = func(*args, **kwargs)
+        <span class="fn">print</span>(<span class="str">f"{func.__name__}: {time.time()-t:.3f}s"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper
+
+@<span class="fn">timer</span>
+<span class="kw">def</span> <span class="fn">slow_fn</span>():
+    time.sleep(<span class="num">0.1</span>)` },
+  { cat:"functions", title:"Generators", desc:"Lazy sequences with yield.", code:
+`<span class="kw">def</span> <span class="fn">count_up</span>(n):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+        <span class="kw">yield</span> i
+
+<span class="kw">for</span> x <span class="kw">in</span> <span class="fn">count_up</span>(<span class="num">5</span>):
+    <span class="fn">print</span>(x)   <span class="cm"># 0 1 2 3 4</span>
+
+squares = (x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>))
+
+gen = <span class="fn">count_up</span>(<span class="num">3</span>)
+<span class="fn">next</span>(gen)  <span class="cm"># 0</span>
+<span class="fn">next</span>(gen)  <span class="cm"># 1</span>` },
+
+  // COMPREHENSIONS
+  { cat:"comprehensions", title:"List Comprehensions", desc:"Build lists, dicts, and sets in one line.", code:
+`nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+
+squares = [x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> nums]
+evens   = [x <span class="kw">for</span> x <span class="kw">in</span> nums <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span>]
+flat    = [x <span class="kw">for</span> row <span class="kw">in</span> matrix <span class="kw">for</span> x <span class="kw">in</span> row]
+
+<span class="cm"># dict comprehension</span>
+sq_map = {x: x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> nums}
+
+<span class="cm"># set comprehension</span>
+unique = {x % <span class="num">3</span> <span class="kw">for</span> x <span class="kw">in</span> nums}
+
+<span class="cm"># generator expression (lazy)</span>
+total = <span class="fn">sum</span>(x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1000</span>))` },
+
+  // CLASSES
+  { cat:"classes", title:"Class Basics", desc:"Define classes with init, methods, and properties.", code:
+`<span class="kw">class</span> <span class="cl">Robot</span>:
+    species = <span class="str">"TIAGo"</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name: <span class="cl">str</span>):
+        <span class="kw">self</span>.name = name
+        <span class="kw">self</span>._speed = <span class="num">0</span>
+
+    <span class="kw">def</span> <span class="fn">greet</span>(<span class="kw">self</span>) -> <span class="cl">str</span>:
+        <span class="kw">return</span> <span class="str">f"I am {self.name}"</span>
+
+    @<span class="fn">property</span>
+    <span class="kw">def</span> <span class="fn">speed</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="kw">self</span>._speed
+
+    @speed.setter
+    <span class="kw">def</span> <span class="fn">speed</span>(<span class="kw">self</span>, v): <span class="kw">self</span>._speed = <span class="fn">max</span>(<span class="num">0</span>, v)` },
+  { cat:"classes", title:"Inheritance", desc:"Subclassing and super() usage.", code:
+`<span class="kw">class</span> <span class="cl">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name):
+        <span class="kw">self</span>.name = name
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="str">"..."</span>
+
+<span class="kw">class</span> <span class="cl">Dog</span>(<span class="cl">Animal</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name, breed):
+        <span class="fn">super</span>().__init__(name)
+        <span class="kw">self</span>.breed = breed
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="str">"Woof!"</span>
+
+d = <span class="cl">Dog</span>(<span class="str">"Rex"</span>, <span class="str">"Husky"</span>)
+<span class="fn">isinstance</span>(d, <span class="cl">Animal</span>)  <span class="cm"># True</span>` },
+  { cat:"classes", title:"Dataclasses", desc:"Boilerplate-free data containers.", code:
+`<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+
+@<span class="fn">dataclass</span>
+<span class="kw">class</span> <span class="cl">Point</span>:
+    x: <span class="cl">float</span>
+    y: <span class="cl">float</span>
+    label: <span class="cl">str</span> = <span class="str">"origin"</span>
+    tags: <span class="cl">list</span> = field(default_factory=<span class="fn">list</span>)
+
+p = <span class="cl">Point</span>(<span class="num">1.0</span>, <span class="num">2.0</span>)
+<span class="fn">print</span>(p)
+<span class="cm"># Point(x=1.0, y=2.0, label='origin', tags=[])</span>
+
+@<span class="fn">dataclass</span>(frozen=<span class="bl">True</span>)
+<span class="kw">class</span> <span class="cl">Config</span>:
+    debug: <span class="cl">bool</span> = <span class="bl">False</span>` },
+  { cat:"classes", title:"Dunder Methods", desc:"__str__, __repr__, __len__, __eq__, __add__, __hash__.", code:
+`<span class="kw">class</span> <span class="cl">Vector</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, x, y):
+        <span class="kw">self</span>.x, <span class="kw">self</span>.y = x, y
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> <span class="str">f"Vector({self.x}, {self.y})"</span>
+
+    <span class="kw">def</span> <span class="fn">__len__</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="num">2</span>
+
+    <span class="kw">def</span> <span class="fn">__eq__</span>(<span class="kw">self</span>, other):
+        <span class="kw">return</span> <span class="kw">self</span>.x == other.x <span class="kw">and</span> <span class="kw">self</span>.y == other.y
+
+    <span class="kw">def</span> <span class="fn">__add__</span>(<span class="kw">self</span>, other):
+        <span class="kw">return</span> <span class="cl">Vector</span>(<span class="kw">self</span>.x+other.x, <span class="kw">self</span>.y+other.y)
+
+    <span class="kw">def</span> <span class="fn">__hash__</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> <span class="fn">hash</span>((<span class="kw">self</span>.x, <span class="kw">self</span>.y))` },
+  { cat:"classes", title:"staticmethod & classmethod", desc:"Alternative constructors and utility methods.", code:
+`<span class="kw">class</span> <span class="cl">Temperature</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, celsius):
+        <span class="kw">self</span>.celsius = celsius
+
+    @<span class="fn">classmethod</span>
+    <span class="kw">def</span> <span class="fn">from_fahrenheit</span>(cls, f):
+        <span class="kw">return</span> cls((f - <span class="num">32</span>) * <span class="num">5</span> / <span class="num">9</span>)
+
+    @<span class="fn">classmethod</span>
+    <span class="kw">def</span> <span class="fn">from_kelvin</span>(cls, k):
+        <span class="kw">return</span> cls(k - <span class="num">273.15</span>)
+
+    @<span class="fn">staticmethod</span>
+    <span class="kw">def</span> <span class="fn">is_valid</span>(c): <span class="kw">return</span> c >= -<span class="num">273.15</span>
+
+t = Temperature.from_fahrenheit(<span class="num">98.6</span>)
+Temperature.is_valid(<span class="num">100</span>)` },
+  { cat:"classes", title:"Abstract Base Classes", desc:"Enforce interface contracts with ABC.", code:
+`<span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cl">Shape</span>(ABC):
+
+    @<span class="fn">abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="kw">self</span>) -> <span class="cl">float</span>: ...
+
+    @<span class="fn">abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">perimeter</span>(<span class="kw">self</span>) -> <span class="cl">float</span>: ...
+
+    <span class="kw">def</span> <span class="fn">describe</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> <span class="str">f"area={self.area():.2f}"</span>
+
+<span class="kw">class</span> <span class="cl">Circle</span>(<span class="cl">Shape</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, r): <span class="kw">self</span>.r = r
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="num">3.14159</span> * <span class="kw">self</span>.r**<span class="num">2</span>
+    <span class="kw">def</span> <span class="fn">perimeter</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="num">2</span> * <span class="num">3.14159</span> * <span class="kw">self</span>.r` },
+  { cat:"classes", title:"__slots__", desc:"Reduce memory use by fixing allowed attributes.", code:
+`<span class="kw">class</span> <span class="cl">Point</span>:
+    __slots__ = (<span class="str">"x"</span>, <span class="str">"y"</span>)
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, x, y):
+        <span class="kw">self</span>.x, <span class="kw">self</span>.y = x, y
+
+p = <span class="cl">Point</span>(<span class="num">1</span>, <span class="num">2</span>)
+<span class="cm"># p.z = 3 → AttributeError (no __dict__)</span>
+
+<span class="cm"># ~40-50% less memory vs normal class</span>
+<span class="cm"># faster attribute access</span>
+<span class="kw">import</span> sys
+<span class="fn">print</span>(sys.getsizeof(p))  <span class="cm"># ~48 bytes</span>` },
+
+  // BUILTINS
+  { cat:"builtins", title:"map / filter / reduce", desc:"Functional-style operations on iterables.", code:
+`<span class="kw">from</span> functools <span class="kw">import</span> reduce
+
+nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
+
+<span class="fn">list</span>(<span class="fn">map</span>(<span class="kw">lambda</span> x: x**<span class="num">2</span>, nums))   <span class="cm"># [1, 4, 9, 16]</span>
+<span class="fn">list</span>(<span class="fn">filter</span>(<span class="kw">lambda</span> x: x > <span class="num">2</span>, nums)) <span class="cm"># [3, 4]</span>
+<span class="fn">reduce</span>(<span class="kw">lambda</span> a, b: a + b, nums)     <span class="cm"># 10</span>
+
+<span class="fn">any</span>(x > <span class="num">3</span> <span class="kw">for</span> x <span class="kw">in</span> nums)  <span class="cm"># True</span>
+<span class="fn">all</span>(x > <span class="num">0</span> <span class="kw">for</span> x <span class="kw">in</span> nums)  <span class="cm"># True</span>` },
+  { cat:"builtins", title:"zip / enumerate / chain", desc:"Powerful iteration utilities.", code:
+`<span class="kw">from</span> itertools <span class="kw">import</span> chain
+
+a = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+b = [<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>]
+
+<span class="fn">list</span>(<span class="fn">zip</span>(a, b))
+<span class="cm"># [(1,'a'), (2,'b'), (3,'c')]</span>
+
+x, y = <span class="fn">zip</span>(*<span class="fn">zip</span>(a, b))   <span class="cm"># unzip</span>
+
+<span class="kw">for</span> i, v <span class="kw">in</span> <span class="fn">enumerate</span>(b, start=<span class="num">1</span>):
+    <span class="fn">print</span>(i, v)
+
+<span class="fn">list</span>(<span class="fn">chain</span>([<span class="num">1</span>,<span class="num">2</span>], [<span class="num">3</span>,<span class="num">4</span>]))  <span class="cm"># [1,2,3,4]</span>` },
+  { cat:"builtins", title:"Common Builtins", desc:"Frequently needed built-in functions.", code:
+`<span class="fn">abs</span>(-<span class="num">5</span>)           <span class="cm"># 5</span>
+<span class="fn">round</span>(<span class="num">3.7</span>)         <span class="cm"># 4</span>
+<span class="fn">round</span>(<span class="num">3.14159</span>, <span class="num">2</span>)  <span class="cm"># 3.14</span>
+<span class="fn">min</span>([<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>])       <span class="cm"># 1</span>
+<span class="fn">max</span>([<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>])       <span class="cm"># 3</span>
+<span class="fn">sum</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])       <span class="cm"># 6</span>
+<span class="fn">len</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])       <span class="cm"># 3</span>
+<span class="fn">type</span>(<span class="num">42</span>)            <span class="cm"># &lt;class 'int'&gt;</span>
+<span class="fn">isinstance</span>(<span class="num">42</span>, <span class="cl">int</span>) <span class="cm"># True</span>
+<span class="fn">dir</span>(obj)            <span class="cm"># list attributes</span>
+<span class="fn">vars</span>(obj)           <span class="cm"># instance __dict__</span>` },
+
+  // I/O
+  { cat:"io", title:"File I/O", desc:"Reading and writing files safely.", code:
+`<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"file.txt"</span>) <span class="kw">as</span> f:
+    content = f.read()
+    lines   = f.readlines()
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"out.txt"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    f.write(<span class="str">"hello\n"</span>)
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"out.txt"</span>, <span class="str">"a"</span>) <span class="kw">as</span> f:
+    f.write(<span class="str">"more\n"</span>)
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"img.jpg"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    data = f.read()` },
+  { cat:"io", title:"JSON & CSV", desc:"Serialization and data file handling.", code:
+`<span class="kw">import</span> json, csv
+
+data = json.loads(<span class="str">'{"x":1}'</span>)
+text = json.dumps(data, indent=<span class="num">2</span>)
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.json"</span>) <span class="kw">as</span> f: data = json.load(f)
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"out.json"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f: json.dump(data, f, indent=<span class="num">2</span>)
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.csv"</span>) <span class="kw">as</span> f:
+    reader = csv.DictReader(f)
+    rows = <span class="fn">list</span>(reader)` },
+  { cat:"io", title:"pathlib", desc:"Modern path handling — better than os.path.", code:
+`<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+
+p = Path(<span class="str">"data/results.csv"</span>)
+
+p.exists()           <span class="cm"># bool</span>
+p.suffix             <span class="cm"># '.csv'</span>
+p.stem               <span class="cm"># 'results'</span>
+p.parent             <span class="cm"># Path('data')</span>
+p.read_text()        <span class="cm"># file contents</span>
+p.write_text(<span class="str">"hi"</span>)
+p.mkdir(parents=<span class="bl">True</span>, exist_ok=<span class="bl">True</span>)
+
+<span class="fn">list</span>(Path(<span class="str">"."</span>).glob(<span class="str">"**/*.py"</span>))` },
+
+  // EXCEPTIONS
+  { cat:"exceptions", title:"try / except / finally", desc:"Catching and handling exceptions cleanly.", code:
+`<span class="kw">try</span>:
+    result = <span class="num">10</span> / <span class="num">0</span>
+<span class="kw">except</span> <span class="cl">ZeroDivisionError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"Error: {e}"</span>)
+<span class="kw">except</span> (<span class="cl">TypeError</span>, <span class="cl">ValueError</span>) <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"Type/Value error: {e}"</span>)
+<span class="kw">except</span> <span class="cl">Exception</span>:
+    <span class="kw">raise</span>
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"no error"</span>)
+<span class="kw">finally</span>:
+    <span class="fn">print</span>(<span class="str">"always runs"</span>)` },
+  { cat:"exceptions", title:"Custom Exceptions", desc:"Define your own exception classes.", code:
+`<span class="kw">class</span> <span class="cl">AppError</span>(<span class="cl">Exception</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, msg, code=<span class="num">0</span>):
+        <span class="fn">super</span>().__init__(msg)
+        <span class="kw">self</span>.code = code
+
+<span class="kw">class</span> <span class="cl">NotFoundError</span>(<span class="cl">AppError</span>): <span class="kw">pass</span>
+<span class="kw">class</span> <span class="cl">ValidationError</span>(<span class="cl">AppError</span>): <span class="kw">pass</span>
+
+<span class="kw">try</span>:
+    <span class="kw">raise</span> <span class="cl">NotFoundError</span>(<span class="str">"item missing"</span>, <span class="num">404</span>)
+<span class="kw">except</span> <span class="cl">AppError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(e.code, e)` },
+  { cat:"exceptions", title:"Context Managers", desc:"Custom with-statement using contextlib.", code:
+`<span class="kw">from</span> contextlib <span class="kw">import</span> contextmanager
+
+@<span class="fn">contextmanager</span>
+<span class="kw">def</span> <span class="fn">managed_resource</span>(name):
+    <span class="fn">print</span>(<span class="str">f"Opening {name}"</span>)
+    <span class="kw">try</span>:
+        <span class="kw">yield</span> name
+    <span class="kw">finally</span>:
+        <span class="fn">print</span>(<span class="str">f"Closing {name}"</span>)
+
+<span class="kw">with</span> <span class="fn">managed_resource</span>(<span class="str">"db"</span>) <span class="kw">as</span> r:
+    <span class="fn">print</span>(<span class="str">f"Using {r}"</span>)` },
+
+  // ASYNC
+  { cat:"async", title:"async / await basics", desc:"Define and run async functions.", code:
+`<span class="kw">import</span> asyncio
+
+<span class="kw">async def</span> <span class="fn">fetch</span>(url: <span class="cl">str</span>) -> <span class="cl">str</span>:
+    <span class="kw">await</span> asyncio.sleep(<span class="num">1</span>)
+    <span class="kw">return</span> <span class="str">f"data from {url}"</span>
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    result = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">"http://example.com"</span>)
+    <span class="fn">print</span>(result)
+
+asyncio.run(<span class="fn">main</span>())` },
+  { cat:"async", title:"asyncio.gather", desc:"Run multiple coroutines concurrently.", code:
+`<span class="kw">import</span> asyncio
+
+<span class="kw">async def</span> <span class="fn">task</span>(n):
+    <span class="kw">await</span> asyncio.sleep(n)
+    <span class="kw">return</span> <span class="str">f"done {n}"</span>
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    results = <span class="kw">await</span> asyncio.gather(
+        <span class="fn">task</span>(<span class="num">1</span>),
+        <span class="fn">task</span>(<span class="num">2</span>),
+        <span class="fn">task</span>(<span class="num">3</span>),
+    )
+    <span class="fn">print</span>(results)
+    <span class="cm"># ['done 1', 'done 2', 'done 3']</span>
+
+asyncio.run(<span class="fn">main</span>())` },
+  { cat:"async", title:"asyncio Tasks", desc:"Create background tasks and cancel them.", code:
+`<span class="kw">import</span> asyncio
+
+<span class="kw">async def</span> <span class="fn">worker</span>():
+    <span class="kw">while</span> <span class="bl">True</span>:
+        <span class="fn">print</span>(<span class="str">"working..."</span>)
+        <span class="kw">await</span> asyncio.sleep(<span class="num">1</span>)
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    task = asyncio.create_task(<span class="fn">worker</span>())
+    <span class="kw">await</span> asyncio.sleep(<span class="num">3</span>)
+    task.cancel()
+    <span class="kw">try</span>:
+        <span class="kw">await</span> task
+    <span class="kw">except</span> asyncio.CancelledError:
+        <span class="fn">print</span>(<span class="str">"task cancelled"</span>)
+
+asyncio.run(<span class="fn">main</span>())` },
+  { cat:"async", title:"Async Context Manager", desc:"async with and async for patterns.", code:
+`<span class="kw">import</span> asyncio
+
+<span class="kw">class</span> <span class="cl">AsyncDB</span>:
+    <span class="kw">async def</span> <span class="fn">__aenter__</span>(<span class="kw">self</span>):
+        <span class="fn">print</span>(<span class="str">"connect"</span>)
+        <span class="kw">return</span> <span class="kw">self</span>
+
+    <span class="kw">async def</span> <span class="fn">__aexit__</span>(<span class="kw">self</span>, *args):
+        <span class="fn">print</span>(<span class="str">"disconnect"</span>)
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="kw">async with</span> <span class="cl">AsyncDB</span>() <span class="kw">as</span> db:
+        <span class="fn">print</span>(<span class="str">"using db"</span>)
+
+    <span class="kw">async for</span> item <span class="kw">in</span> some_async_gen():
+        <span class="fn">print</span>(item)` },
+
+  // STDLIB
+  { cat:"stdlib", title:"os & sys", desc:"OS paths, env vars, and system info.", code:
+`<span class="kw">import</span> os, sys
+
+os.environ.get(<span class="str">"HOME"</span>)
+os.environ[<span class="str">"MY_KEY"</span>] = <span class="str">"val"</span>
+
+os.getcwd()
+os.listdir(<span class="str">"."</span>)
+os.path.join(<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>)
+os.path.exists(<span class="str">"file.txt"</span>)
+os.makedirs(<span class="str">"dir/sub"</span>, exist_ok=<span class="bl">True</span>)
+
+sys.argv         <span class="cm"># CLI args list</span>
+sys.exit(<span class="num">0</span>)
+sys.platform     <span class="cm"># 'linux', 'win32'</span>` },
+  { cat:"stdlib", title:"subprocess", desc:"Run shell commands from Python.", code:
+`<span class="kw">import</span> subprocess
+
+subprocess.run([<span class="str">"ls"</span>, <span class="str">"-la"</span>])
+
+result = subprocess.run(
+    [<span class="str">"git"</span>, <span class="str">"status"</span>],
+    capture_output=<span class="bl">True</span>,
+    text=<span class="bl">True</span>
+)
+<span class="fn">print</span>(result.stdout)
+<span class="fn">print</span>(result.returncode)
+
+subprocess.run([<span class="str">"cmd"</span>], check=<span class="bl">True</span>)` },
+  { cat:"stdlib", title:"datetime", desc:"Dates, times, formatting, and deltas.", code:
+`<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta, date
+
+now   = datetime.now()
+today = date.today()
+
+now.strftime(<span class="str">"%Y-%m-%d %H:%M:%S"</span>)
+
+datetime.strptime(<span class="str">"2025-01-15"</span>, <span class="str">"%Y-%m-%d"</span>)
+
+tomorrow = now + timedelta(days=<span class="num">1</span>)
+diff = datetime(<span class="num">2026</span>, <span class="num">1</span>, <span class="num">1</span>) - now
+diff.days` },
+  { cat:"stdlib", title:"re — regex", desc:"Pattern matching and substitution.", code:
+`<span class="kw">import</span> re
+
+text = <span class="str">"email: user@example.com"</span>
+
+m = re.search(<span class="str">r"[\w.]+@[\w.]+"</span>, text)
+m.group()   <span class="cm"># 'user@example.com'</span>
+
+re.findall(<span class="str">r"\d+"</span>, <span class="str">"a1 b22 c333"</span>)
+<span class="cm"># ['1', '22', '333']</span>
+
+re.sub(<span class="str">r"\s+"</span>, <span class="str">"_"</span>, <span class="str">"hello world"</span>)
+<span class="cm"># 'hello_world'</span>
+
+m = re.match(<span class="str">r"(\w+):(\d+)"</span>, <span class="str">"port:8080"</span>)
+m.group(<span class="num">1</span>), m.group(<span class="num">2</span>)  <span class="cm"># 'port', '8080'</span>` },
+  { cat:"stdlib", title:"collections", desc:"Counter, deque, defaultdict, namedtuple.", code:
+`<span class="kw">from</span> collections <span class="kw">import</span> Counter, deque, defaultdict, namedtuple
+
+c = Counter(<span class="str">"abracadabra"</span>)
+c.most_common(<span class="num">3</span>)   <span class="cm"># [('a',5),('b',2),('r',2)]</span>
+
+dq = deque([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>], maxlen=<span class="num">5</span>)
+dq.appendleft(<span class="num">0</span>)
+dq.popleft()
+
+dd = defaultdict(<span class="fn">list</span>)
+dd[<span class="str">"key"</span>].append(<span class="num">1</span>)
+
+Point = namedtuple(<span class="str">"Point"</span>, [<span class="str">"x"</span>, <span class="str">"y"</span>])
+p = Point(<span class="num">1</span>, <span class="num">2</span>)
+p.x, p.y` },
+  { cat:"stdlib", title:"itertools", desc:"Combinatoric and infinite iterators.", code:
+`<span class="kw">from</span> itertools <span class="kw">import</span> product, permutations, combinations, islice, cycle
+
+<span class="fn">list</span>(product([<span class="num">0</span>,<span class="num">1</span>], repeat=<span class="num">2</span>))
+<span class="cm"># [(0,0),(0,1),(1,0),(1,1)]</span>
+
+<span class="fn">list</span>(combinations(<span class="str">"ABC"</span>, <span class="num">2</span>))
+<span class="cm"># [('A','B'),('A','C'),('B','C')]</span>
+
+<span class="fn">list</span>(permutations(<span class="str">"AB"</span>, <span class="num">2</span>))
+<span class="cm"># [('A','B'),('B','A')]</span>
+
+<span class="fn">list</span>(islice(cycle([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]), <span class="num">7</span>))
+<span class="cm"># [1,2,3,1,2,3,1]</span>` },
+  { cat:"stdlib", title:"logging", desc:"Proper logging instead of print statements.", code:
+`<span class="kw">import</span> logging
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format=<span class="str">"%(asctime)s %(levelname)s %(message)s"</span>
+)
+
+logger = logging.getLogger(__name__)
+
+logger.debug(<span class="str">"debug info"</span>)
+logger.info(<span class="str">"started"</span>)
+logger.warning(<span class="str">"low memory"</span>)
+logger.error(<span class="str">"file not found"</span>)
+logger.exception(<span class="str">"unexpected"</span>)  <span class="cm"># + traceback</span>` },
+  { cat:"stdlib", title:"argparse", desc:"Build CLI tools with typed arguments.", code:
+`<span class="kw">import</span> argparse
+
+parser = argparse.ArgumentParser(description=<span class="str">"My tool"</span>)
+
+parser.add_argument(<span class="str">"input"</span>, help=<span class="str">"input file"</span>)
+parser.add_argument(<span class="str">"--output"</span>, <span class="str">"-o"</span>, default=<span class="str">"out.txt"</span>)
+parser.add_argument(<span class="str">"--verbose"</span>, action=<span class="str">"store_true"</span>)
+parser.add_argument(<span class="str">"--count"</span>, type=<span class="cl">int</span>, default=<span class="num">1</span>)
+
+args = parser.parse_args()
+<span class="fn">print</span>(args.input, args.verbose)` },
+  { cat:"stdlib", title:"sqlite3", desc:"Embedded SQL database — no server needed.", code:
+`<span class="kw">import</span> sqlite3
+
+conn = sqlite3.connect(<span class="str">"app.db"</span>)
+cur  = conn.cursor()
+
+cur.execute(<span class="str">"""CREATE TABLE IF NOT EXISTS users
+             (id INTEGER PRIMARY KEY, name TEXT, age INT)"""</span>)
+cur.execute(<span class="str">"INSERT INTO users VALUES (?, ?, ?)"</span>,
+            (<span class="num">1</span>, <span class="str">"Munim"</span>, <span class="num">25</span>))
+conn.commit()
+
+cur.execute(<span class="str">"SELECT * FROM users WHERE age > ?"</span>, (<span class="num">20</span>,))
+rows = cur.fetchall()
+conn.close()` },
+  { cat:"stdlib", title:"pickle", desc:"Serialize and deserialize Python objects.", code:
+`<span class="kw">import</span> pickle
+
+data = {<span class="str">"model"</span>: [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>], <span class="str">"config"</span>: {<span class="str">"lr"</span>: <span class="num">0.01</span>}}
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.pkl"</span>, <span class="str">"wb"</span>) <span class="kw">as</span> f:
+    pickle.dump(data, f)
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    loaded = pickle.load(f)
+
+b = pickle.dumps(data)
+data2 = pickle.loads(b)
+<span class="cm"># ⚠ never unpickle untrusted data</span>` },
+
+  // TYPING
+  { cat:"typing", title:"Type Hints", desc:"Annotate variables and functions with types.", code:
+`<span class="kw">from</span> typing <span class="kw">import</span> Optional, Union
+
+name: <span class="cl">str</span> = <span class="str">"Munim"</span>
+scores: <span class="cl">list</span>[<span class="cl">int</span>] = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+lookup: <span class="cl">dict</span>[<span class="cl">str</span>, <span class="cl">int</span>] = {}
+
+<span class="kw">def</span> <span class="fn">find</span>(key: <span class="cl">str</span>) -> Optional[<span class="cl">str</span>]: ...
+
+<span class="kw">def</span> <span class="fn">process</span>(x: Union[<span class="cl">int</span>, <span class="cl">str</span>]) -> <span class="cl">str</span>: ...
+
+<span class="cm"># Python 3.10+ shorthand</span>
+<span class="kw">def</span> <span class="fn">f</span>(x: <span class="cl">int</span> | <span class="bl">None</span>) -> <span class="cl">str</span> | <span class="cl">int</span>: ...` },
+  { cat:"typing", title:"TypedDict & Protocol", desc:"Type-safe dicts and structural subtyping.", code:
+`<span class="kw">from</span> typing <span class="kw">import</span> TypedDict, Protocol
+
+<span class="kw">class</span> <span class="cl">UserDict</span>(TypedDict):
+    name: <span class="cl">str</span>
+    age: <span class="cl">int</span>
+    email: <span class="cl">str</span>
+
+user: <span class="cl">UserDict</span> = {<span class="str">"name"</span>: <span class="str">"x"</span>, <span class="str">"age"</span>: <span class="num">1</span>, <span class="str">"email"</span>: <span class="str">"x@y"</span>}
+
+<span class="kw">class</span> <span class="cl">Drawable</span>(Protocol):
+    <span class="kw">def</span> <span class="fn">draw</span>(<span class="kw">self</span>) -> <span class="bl">None</span>: ...
+
+<span class="kw">def</span> <span class="fn">render</span>(obj: <span class="cl">Drawable</span>) -> <span class="bl">None</span>:
+    obj.draw()` },
+  { cat:"typing", title:"Generics & TypeVar", desc:"Write type-safe generic functions.", code:
+`<span class="kw">from</span> typing <span class="kw">import</span> TypeVar, Generic
+
+T = TypeVar(<span class="str">"T"</span>)
+
+<span class="kw">def</span> <span class="fn">first</span>(items: <span class="cl">list</span>[T]) -> T:
+    <span class="kw">return</span> items[<span class="num">0</span>]
+
+first([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])    <span class="cm"># inferred: int</span>
+first([<span class="str">"a"</span>, <span class="str">"b"</span>])  <span class="cm"># inferred: str</span>
+
+<span class="kw">class</span> <span class="cl">Box</span>(<span class="cl">Generic</span>[T]):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val: T): <span class="kw">self</span>.val = val
+    <span class="kw">def</span> <span class="fn">get</span>(<span class="kw">self</span>) -> T: <span class="kw">return</span> <span class="kw">self</span>.val
+
+b = <span class="cl">Box</span>(<span class="num">42</span>)` },
+
+  // DEBUGGING
+  { cat:"debugging", title:"pdb / breakpoint", desc:"Drop into interactive debugger mid-execution.", code:
+`<span class="fn">breakpoint</span>()         <span class="cm"># drops into pdb (Python 3.7+)</span>
+
+<span class="kw">import</span> pdb; pdb.set_trace()  <span class="cm"># old way</span>
+
+<span class="cm"># pdb commands:</span>
+<span class="cm"># n  → next line</span>
+<span class="cm"># s  → step into</span>
+<span class="cm"># c  → continue</span>
+<span class="cm"># q  → quit</span>
+<span class="cm"># p x → print x</span>
+<span class="cm"># l  → list source</span>
+<span class="cm"># bt → backtrace</span>` },
+  { cat:"debugging", title:"timeit & profiling", desc:"Measure execution time and find bottlenecks.", code:
+`<span class="kw">import</span> timeit, cProfile
+
+t = timeit.timeit(
+    <span class="str">"[x**2 for x in range(1000)]"</span>,
+    number=<span class="num">1000</span>
+)
+<span class="fn">print</span>(<span class="str">f"{t:.3f}s"</span>)
+
+cProfile.run(<span class="str">"my_function()"</span>)
+
+<span class="kw">import</span> time
+start = time.perf_counter()
+<span class="cm"># ... code ...</span>
+elapsed = time.perf_counter() - start
+<span class="fn">print</span>(<span class="str">f"{elapsed*1000:.2f}ms"</span>)` },
+  { cat:"debugging", title:"assert & __debug__", desc:"Assertions for catching logic errors early.", code:
+`<span class="kw">assert</span> x > <span class="num">0</span>, <span class="str">f"x must be positive, got {x}"</span>
+<span class="kw">assert</span> <span class="fn">isinstance</span>(data, <span class="cl">list</span>), <span class="str">"expected list"</span>
+
+<span class="kw">def</span> <span class="fn">divide</span>(a, b):
+    <span class="kw">assert</span> b != <span class="num">0</span>, <span class="str">"cannot divide by zero"</span>
+    <span class="kw">return</span> a / b
+
+<span class="cm"># NOTE: asserts stripped with python -O</span>
+
+x = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+<span class="fn">print</span>(<span class="str">f"{x = }"</span>)   <span class="cm"># x = [1, 2, 3]</span>` },
+
+  // NUMPY
+  { cat:"numpy", title:"NumPy Arrays", desc:"Create and inspect numpy arrays.", code:
+`<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+a = np.array([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])
+b = np.zeros((<span class="num">3</span>, <span class="num">4</span>))
+c = np.ones((<span class="num">2</span>, <span class="num">3</span>))
+d = np.arange(<span class="num">0</span>, <span class="num">10</span>, <span class="num">2</span>)   <span class="cm"># [0,2,4,6,8]</span>
+e = np.linspace(<span class="num">0</span>, <span class="num">1</span>, <span class="num">5</span>)
+f = np.random.randn(<span class="num">3</span>, <span class="num">3</span>)
+
+a.shape    <span class="cm"># (3,)</span>
+a.dtype    <span class="cm"># dtype('int64')</span>
+a.ndim     <span class="cm"># 1</span>
+a.size     <span class="cm"># 3</span>` },
+  { cat:"numpy", title:"NumPy Indexing & Slicing", desc:"Select elements, rows, columns, and masked data.", code:
+`<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+a = np.array([[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>],[<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>],[<span class="num">7</span>,<span class="num">8</span>,<span class="num">9</span>]])
+
+a[<span class="num">0</span>, <span class="num">1</span>]      <span class="cm"># 2</span>
+a[<span class="num">1</span>, :]      <span class="cm"># [4,5,6]</span>
+a[:, <span class="num">2</span>]      <span class="cm"># [3,6,9]</span>
+a[<span class="num">0</span>:<span class="num">2</span>, <span class="num">1</span>:<span class="num">3</span>]  <span class="cm"># [[2,3],[5,6]]</span>
+
+a[a > <span class="num">5</span>]     <span class="cm"># [6,7,8,9] boolean mask</span>
+a[[<span class="num">0</span>, <span class="num">2</span>], :] <span class="cm"># rows 0 and 2</span>
+
+a[a < <span class="num">3</span>] = <span class="num">0</span>` },
+  { cat:"numpy", title:"NumPy Operations", desc:"Math, aggregation, reshape, and broadcasting.", code:
+`<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+a = np.array([[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,<span class="num">4</span>]])
+
+a * <span class="num">2</span>        <span class="cm"># [[2,4],[6,8]]</span>
+a ** <span class="num">2</span>       <span class="cm"># [[1,4],[9,16]]</span>
+np.sqrt(a)
+
+a.sum()       <span class="cm"># 10</span>
+a.sum(axis=<span class="num">0</span>) <span class="cm"># [4,6] col sums</span>
+a.mean(), a.std(), a.max()
+
+a.reshape(<span class="num">1</span>, <span class="num">4</span>)
+a.flatten()
+a.T           <span class="cm"># transpose</span>
+np.dot(a, a)  <span class="cm"># matrix multiply</span>` },
+  { cat:"numpy", title:"NumPy Stacking & Concat", desc:"Combine and split arrays along axes.", code:
+`<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+a = np.array([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])
+b = np.array([<span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>])
+
+np.concatenate([a, b])    <span class="cm"># [1,2,3,4,5,6]</span>
+np.vstack([a, b])         <span class="cm"># [[1,2,3],[4,5,6]]</span>
+np.hstack([a, b])         <span class="cm"># [1,2,3,4,5,6]</span>
+np.stack([a, b], axis=<span class="num">0</span>)
+
+np.split(a, <span class="num">3</span>)           <span class="cm"># [array([1]),array([2]),array([3])]</span>
+
+a[np.newaxis, :]  <span class="cm"># shape (1,3)</span>
+a[:, np.newaxis]  <span class="cm"># shape (3,1)</span>` },
+
+  // PANDAS
+  { cat:"pandas", title:"DataFrame Basics", desc:"Create and inspect DataFrames.", code:
+`<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.DataFrame({
+    <span class="str">"name"</span>: [<span class="str">"Alice"</span>, <span class="str">"Bob"</span>, <span class="str">"Carol"</span>],
+    <span class="str">"age"</span>:  [<span class="num">25</span>, <span class="num">30</span>, <span class="num">22</span>],
+    <span class="str">"score"</span>:[<span class="num">88.5</span>, <span class="num">92.0</span>, <span class="num">79.3</span>],
+})
+
+df.head(<span class="num">3</span>)
+df.info()
+df.describe()
+df.shape    <span class="cm"># (3, 3)</span>
+df.columns
+df.dtypes` },
+  { cat:"pandas", title:"DataFrame Selection", desc:"Select rows, columns, and cells.", code:
+`df[<span class="str">"age"</span>]
+df[[<span class="str">"name"</span>, <span class="str">"score"</span>]]
+
+df.loc[<span class="num">0</span>:<span class="num">1</span>, <span class="str">"name"</span>:<span class="str">"age"</span>]   <span class="cm"># label (inclusive)</span>
+df.iloc[<span class="num">0</span>:<span class="num">2</span>, <span class="num">0</span>:<span class="num">2</span>]            <span class="cm"># position (exclusive end)</span>
+
+df[df[<span class="str">"age"</span>] > <span class="num">24</span>]
+df[(df[<span class="str">"age"</span>] > <span class="num">24</span>) & (df[<span class="str">"score"</span>] > <span class="num">85</span>)]
+
+df.query(<span class="str">"age > 24 and score > 85"</span>)` },
+  { cat:"pandas", title:"DataFrame Operations", desc:"Add columns, groupby, sort, merge.", code:
+`df[<span class="str">"grade"</span>] = df[<span class="str">"score"</span>].apply(
+    <span class="kw">lambda</span> x: <span class="str">"A"</span> <span class="kw">if</span> x >= <span class="num">90</span> <span class="kw">else</span> <span class="str">"B"</span>
+)
+
+df.groupby(<span class="str">"grade"</span>)[<span class="str">"score"</span>].mean()
+
+df.sort_values(<span class="str">"score"</span>, ascending=<span class="bl">False</span>)
+
+pd.merge(df1, df2, on=<span class="str">"id"</span>, how=<span class="str">"left"</span>)
+
+df.dropna()
+df.fillna(<span class="num">0</span>)
+df.rename(columns={<span class="str">"score"</span>: <span class="str">"points"</span>})` },
+  { cat:"pandas", title:"Pandas I/O", desc:"Read and write CSV, JSON, Excel.", code:
+`<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.read_csv(<span class="str">"data.csv"</span>)
+df = pd.read_csv(<span class="str">"data.csv"</span>, index_col=<span class="num">0</span>)
+df = pd.read_json(<span class="str">"data.json"</span>)
+df = pd.read_excel(<span class="str">"data.xlsx"</span>)
+
+df.to_csv(<span class="str">"out.csv"</span>, index=<span class="bl">False</span>)
+df.to_json(<span class="str">"out.json"</span>, orient=<span class="str">"records"</span>)
+df.to_excel(<span class="str">"out.xlsx"</span>, index=<span class="bl">False</span>)
+
+pd.DataFrame([{<span class="str">"x"</span>:<span class="num">1</span>},{<span class="str">"x"</span>:<span class="num">2</span>}])` },
+
+  // FUNCTOOLS
+  { cat:"functools", title:"functools.lru_cache", desc:"Memoize expensive function calls automatically.", code:
+`<span class="kw">from</span> functools <span class="kw">import</span> lru_cache, cache
+
+@lru_cache(maxsize=<span class="num">128</span>)
+<span class="kw">def</span> <span class="fn">fib</span>(n: <span class="cl">int</span>) -> <span class="cl">int</span>:
+    <span class="kw">if</span> n < <span class="num">2</span>: <span class="kw">return</span> n
+    <span class="kw">return</span> <span class="fn">fib</span>(n-<span class="num">1</span>) + <span class="fn">fib</span>(n-<span class="num">2</span>)
+
+@cache
+<span class="kw">def</span> <span class="fn">expensive</span>(x): ...
+
+<span class="fn">fib</span>.cache_info()
+<span class="fn">fib</span>.cache_clear()` },
+  { cat:"functools", title:"functools.partial", desc:"Pre-fill function arguments to create new callables.", code:
+`<span class="kw">from</span> functools <span class="kw">import</span> partial
+
+<span class="kw">def</span> <span class="fn">power</span>(base, exp):
+    <span class="kw">return</span> base ** exp
+
+square = partial(power, exp=<span class="num">2</span>)
+cube   = partial(power, exp=<span class="num">3</span>)
+
+square(<span class="num">4</span>)   <span class="cm"># 16</span>
+cube(<span class="num">3</span>)     <span class="cm"># 27</span>
+
+log_err = partial(<span class="fn">print</span>, end=<span class="str">" [ERROR]\n"</span>)
+<span class="fn">log_err</span>(<span class="str">"disk full"</span>)` },
+  { cat:"functools", title:"operator module", desc:"itemgetter, attrgetter for fast key access.", code:
+`<span class="kw">from</span> operator <span class="kw">import</span> itemgetter, attrgetter, methodcaller
+
+people = [
+    {<span class="str">"name"</span>: <span class="str">"Bob"</span>,   <span class="str">"age"</span>: <span class="num">30</span>},
+    {<span class="str">"name"</span>: <span class="str">"Alice"</span>, <span class="str">"age"</span>: <span class="num">25</span>},
+]
+
+<span class="fn">sorted</span>(people, key=itemgetter(<span class="str">"age"</span>))
+
+<span class="fn">sorted</span>(objects, key=attrgetter(<span class="str">"name"</span>))
+
+<span class="fn">sorted</span>(people, key=itemgetter(<span class="str">"age"</span>, <span class="str">"name"</span>))
+
+<span class="fn">list</span>(<span class="fn">map</span>(methodcaller(<span class="str">"upper"</span>), [<span class="str">"a"</span>, <span class="str">"b"</span>]))` },
+
+  // CONCURRENCY
+  { cat:"concurrency", title:"threading", desc:"Run IO-bound tasks in background threads.", code:
+`<span class="kw">import</span> threading
+
+<span class="kw">def</span> <span class="fn">worker</span>(n):
+    <span class="fn">print</span>(<span class="str">f"thread {n} done"</span>)
+
+t = threading.Thread(target=worker, args=(<span class="num">1</span>,))
+t.start()
+t.join()
+
+threads = [threading.Thread(target=worker, args=(i,))
+           <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>)]
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.start()
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.join()
+
+lock = threading.Lock()
+<span class="kw">with</span> lock:
+    shared_resource += <span class="num">1</span>` },
+  { cat:"concurrency", title:"multiprocessing", desc:"True parallelism for CPU-bound tasks.", code:
+`<span class="kw">from</span> multiprocessing <span class="kw">import</span> Pool, Process
+<span class="kw">import</span> multiprocessing <span class="kw">as</span> mp
+
+<span class="kw">def</span> <span class="fn">square</span>(x): <span class="kw">return</span> x ** <span class="num">2</span>
+
+<span class="kw">with</span> Pool(processes=<span class="num">4</span>) <span class="kw">as</span> pool:
+    results = pool.map(square, <span class="fn">range</span>(<span class="num">10</span>))
+    <span class="cm"># [0, 1, 4, 9, 16, ...]</span>
+
+mp.cpu_count()
+
+p = Process(target=square, args=(<span class="num">5</span>,))
+p.start()
+p.join()` },
+  { cat:"concurrency", title:"concurrent.futures", desc:"High-level thread and process pool executor.", code:
+`<span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor, as_completed
+
+<span class="kw">def</span> <span class="fn">fetch</span>(url): <span class="kw">return</span> <span class="str">f"result:{url}"</span>
+
+urls = [<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>]
+
+<span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">5</span>) <span class="kw">as</span> ex:
+    results = <span class="fn">list</span>(ex.map(fetch, urls))
+
+<span class="kw">with</span> ThreadPoolExecutor() <span class="kw">as</span> ex:
+    futures = {ex.submit(fetch, u): u <span class="kw">for</span> u <span class="kw">in</span> urls}
+    <span class="kw">for</span> f <span class="kw">in</span> as_completed(futures):
+        <span class="fn">print</span>(f.result())` },
+
+  // NETWORKING
+  { cat:"networking", title:"requests", desc:"HTTP GET, POST, headers, auth, session.", code:
+`<span class="kw">import</span> requests
+
+r = requests.get(<span class="str">"https://api.example.com/data"</span>,
+    params={<span class="str">"q"</span>: <span class="str">"python"</span>},
+    headers={<span class="str">"Authorization"</span>: <span class="str">"Bearer token"</span>},
+    timeout=<span class="num">10</span>
+)
+r.status_code
+r.json()
+r.text
+
+r = requests.post(<span class="str">"https://api.example.com/post"</span>,
+    json={<span class="str">"key"</span>: <span class="str">"value"</span>}
+)
+r.raise_for_status()` },
+  { cat:"networking", title:"requests Session", desc:"Reuse connections and persist headers/cookies.", code:
+`<span class="kw">import</span> requests
+
+session = requests.Session()
+session.headers.update({
+    <span class="str">"Authorization"</span>: <span class="str">"Bearer my-token"</span>,
+    <span class="str">"Accept"</span>: <span class="str">"application/json"</span>,
+})
+
+r1 = session.get(<span class="str">"https://api.example.com/users"</span>)
+r2 = session.get(<span class="str">"https://api.example.com/posts"</span>)
+
+<span class="kw">from</span> requests.adapters <span class="kw">import</span> HTTPAdapter
+session.mount(<span class="str">"https://"</span>, HTTPAdapter(max_retries=<span class="num">3</span>))` },
+  { cat:"networking", title:"urllib & URL parsing", desc:"Built-in URL encoding and parsing.", code:
+`<span class="kw">from</span> urllib.parse <span class="kw">import</span> urlparse, urlencode, urljoin, quote, unquote
+
+urlparse(<span class="str">"https://example.com/path?q=1"</span>)
+<span class="cm"># ParseResult(scheme='https', netloc='example.com'...)</span>
+
+urlencode({<span class="str">"q"</span>: <span class="str">"hello world"</span>, <span class="str">"page"</span>: <span class="num">2</span>})
+<span class="cm"># 'q=hello+world&amp;page=2'</span>
+
+quote(<span class="str">"hello/world"</span>)     <span class="cm"># 'hello%2Fworld'</span>
+unquote(<span class="str">"hello%2Fworld"</span>) <span class="cm"># 'hello/world'</span>
+
+urljoin(<span class="str">"https://example.com/a/"</span>, <span class="str">"b"</span>)` },
+
+  // TESTING
+  { cat:"testing", title:"unittest basics", desc:"TestCase, assertions, setUp and tearDown.", code:
+`<span class="kw">import</span> unittest
+
+<span class="kw">class</span> <span class="cl">TestMath</span>(unittest.TestCase):
+
+    <span class="kw">def</span> <span class="fn">setUp</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>.nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+
+    <span class="kw">def</span> <span class="fn">test_sum</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>.assertEqual(<span class="fn">sum</span>(<span class="kw">self</span>.nums), <span class="num">6</span>)
+
+    <span class="kw">def</span> <span class="fn">test_raises</span>(<span class="kw">self</span>):
+        <span class="kw">with</span> <span class="kw">self</span>.assertRaises(<span class="cl">ZeroDivisionError</span>):
+            <span class="num">1</span> / <span class="num">0</span>
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    unittest.main()` },
+  { cat:"testing", title:"pytest basics", desc:"Simple test functions, fixtures, parametrize.", code:
+`<span class="kw">import</span> pytest
+
+<span class="kw">def</span> <span class="fn">test_sum</span>():
+    <span class="kw">assert</span> <span class="fn">sum</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]) == <span class="num">6</span>
+
+<span class="kw">def</span> <span class="fn">test_raises</span>():
+    <span class="kw">with</span> pytest.raises(<span class="cl">ZeroDivisionError</span>):
+        <span class="num">1</span> / <span class="num">0</span>
+
+@pytest.mark.parametrize(<span class="str">"x,expected"</span>, [
+    (<span class="num">2</span>, <span class="num">4</span>), (<span class="num">3</span>, <span class="num">9</span>), (<span class="num">4</span>, <span class="num">16</span>)
+])
+<span class="kw">def</span> <span class="fn">test_square</span>(x, expected):
+    <span class="kw">assert</span> x**<span class="num">2</span> == expected
+
+<span class="cm"># run: pytest -v</span>` },
+  { cat:"testing", title:"pytest fixtures & mocks", desc:"Reusable fixtures and patching with monkeypatch.", code:
+`<span class="kw">import</span> pytest
+<span class="kw">from</span> unittest.mock <span class="kw">import</span> patch
+
+@pytest.fixture
+<span class="kw">def</span> <span class="fn">sample_db</span>():
+    db = {<span class="str">"users"</span>: [<span class="str">"Alice"</span>, <span class="str">"Bob"</span>]}
+    <span class="kw">yield</span> db
+
+<span class="kw">def</span> <span class="fn">test_users</span>(sample_db):
+    <span class="kw">assert</span> <span class="str">"Alice"</span> <span class="kw">in</span> sample_db[<span class="str">"users"</span>]
+
+<span class="kw">def</span> <span class="fn">test_api</span>(monkeypatch):
+    monkeypatch.setenv(<span class="str">"API_KEY"</span>, <span class="str">"test-key"</span>)
+    <span class="kw">with</span> patch(<span class="str">"requests.get"</span>) <span class="kw">as</span> mock:
+        mock.return_value.json.return_value = {<span class="str">"ok"</span>: <span class="bl">True</span>}` },
+
+  // PYTORCH
+  { cat:"torch", title:"PyTorch Tensors", desc:"Create and manipulate tensors.", code:
+`<span class="kw">import</span> torch
+
+t = torch.tensor([<span class="num">1.0</span>, <span class="num">2.0</span>, <span class="num">3.0</span>])
+z = torch.zeros(<span class="num">3</span>, <span class="num">4</span>)
+r = torch.randn(<span class="num">2</span>, <span class="num">3</span>)
+e = torch.eye(<span class="num">3</span>)
+
+t = torch.from_numpy(arr)
+arr = t.numpy()
+
+device = <span class="str">"cuda"</span> <span class="kw">if</span> torch.cuda.is_available() <span class="kw">else</span> <span class="str">"cpu"</span>
+t = t.to(device)
+
+t.shape   <span class="cm"># torch.Size([3])</span>
+t.dtype   <span class="cm"># torch.float32</span>` },
+  { cat:"torch", title:"PyTorch Autograd", desc:"Automatic differentiation and gradient flow.", code:
+`<span class="kw">import</span> torch
+
+x = torch.tensor(<span class="num">3.0</span>, requires_grad=<span class="bl">True</span>)
+y = x ** <span class="num">2</span> + <span class="num">2</span> * x + <span class="num">1</span>
+
+y.backward()     <span class="cm"># compute gradients</span>
+x.grad           <span class="cm"># dy/dx = 2x+2 = 8.0</span>
+
+<span class="kw">with</span> torch.no_grad():
+    out = model(x)
+
+t = tensor.detach().cpu().numpy()
+
+optimizer.zero_grad()
+loss.backward()
+optimizer.step()` },
+  { cat:"torch", title:"nn.Module", desc:"Define a neural network with PyTorch.", code:
+`<span class="kw">import</span> torch
+<span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+
+<span class="kw">class</span> <span class="cl">MLP</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):
+        <span class="fn">super</span>().__init__()
+        <span class="kw">self</span>.net = nn.Sequential(
+            nn.Linear(<span class="num">128</span>, <span class="num">64</span>),
+            nn.ReLU(),
+            nn.Linear(<span class="num">64</span>, <span class="num">10</span>),
+        )
+
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="kw">self</span>, x):
+        <span class="kw">return</span> <span class="kw">self</span>.net(x)
+
+model = <span class="cl">MLP</span>()
+out = model(torch.randn(<span class="num">8</span>, <span class="num">128</span>))  <span class="cm"># (8, 10)</span>` },
+  { cat:"torch", title:"Training Loop", desc:"Standard PyTorch train/eval loop skeleton.", code:
+`optimizer = torch.optim.Adam(model.parameters(), lr=<span class="num">1e-3</span>)
+criterion = nn.CrossEntropyLoss()
+
+model.train()
+<span class="kw">for</span> batch_x, batch_y <span class="kw">in</span> train_loader:
+    batch_x = batch_x.to(device)
+    batch_y = batch_y.to(device)
+    optimizer.zero_grad()
+    loss = criterion(model(batch_x), batch_y)
+    loss.backward()
+    optimizer.step()
+
+model.eval()
+<span class="kw">with</span> torch.no_grad():
+    <span class="kw">for</span> batch_x, batch_y <span class="kw">in</span> val_loader:
+        preds = model(batch_x)` },
+
+  // PYDANTIC
+  { cat:"pydantic", title:"Pydantic BaseModel", desc:"Data validation and parsing with type safety.", code:
+`<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+
+<span class="kw">class</span> <span class="cl">User</span>(BaseModel):
+    name: <span class="cl">str</span>
+    age: <span class="cl">int</span>
+    email: <span class="cl">str</span>
+    score: <span class="cl">float</span> = <span class="num">0.0</span>
+    tags: <span class="cl">list</span>[<span class="cl">str</span>] = []
+
+u = <span class="cl">User</span>(name=<span class="str">"Munim"</span>, age=<span class="str">"25"</span>, email=<span class="str">"x@y.com"</span>)
+<span class="cm"># age auto-coerced to int</span>
+
+u.model_dump()
+u.model_dump_json()
+<span class="cl">User</span>.model_validate({<span class="str">"name"</span>:<span class="str">"x"</span>, <span class="str">"age"</span>:<span class="num">1</span>, <span class="str">"email"</span>:<span class="str">"a@b"</span>})` },
+  { cat:"pydantic", title:"Pydantic Validators & Config", desc:"Field constraints, validators, and settings.", code:
+`<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field, field_validator
+
+<span class="kw">class</span> <span class="cl">Product</span>(BaseModel):
+    name: <span class="cl">str</span>  = Field(min_length=<span class="num">1</span>, max_length=<span class="num">100</span>)
+    price: <span class="cl">float</span> = Field(gt=<span class="num">0</span>)
+    qty: <span class="cl">int</span>   = Field(ge=<span class="num">0</span>, default=<span class="num">0</span>)
+
+    @field_validator(<span class="str">"name"</span>)
+    <span class="kw">def</span> <span class="fn">name_upper</span>(cls, v): <span class="kw">return</span> v.strip().title()
+
+<span class="kw">from</span> pydantic_settings <span class="kw">import</span> BaseSettings
+
+<span class="kw">class</span> <span class="cl">Settings</span>(BaseSettings):
+    api_key: <span class="cl">str</span>
+    debug: <span class="cl">bool</span> = <span class="bl">False</span>
+    port: <span class="cl">int</span> = <span class="num">8000</span>
+
+    <span class="kw">class</span> Config:
+        env_file = <span class="str">".env"</span>` },
+
+  // TEXT
+  { cat:"text", title:"textwrap", desc:"Wrap, indent, and dedent text blocks.", code:
+`<span class="kw">import</span> textwrap
+
+text = <span class="str">"This is a long string that should be wrapped."</span>
+
+textwrap.wrap(text, width=<span class="num">20</span>)
+<span class="cm"># ['This is a long', 'string that should', 'be wrapped.']</span>
+
+textwrap.fill(text, width=<span class="num">30</span>)
+
+code = <span class="str">"""
+    def foo():
+        pass
+"""</span>
+textwrap.dedent(code)
+
+textwrap.indent(<span class="str">"line1\nline2"</span>, prefix=<span class="str">"  "</span>)` },
+  { cat:"text", title:"string module", desc:"String constants and Template substitution.", code:
+`<span class="kw">import</span> string
+
+string.ascii_letters   <span class="cm"># 'abcABC...'</span>
+string.ascii_lowercase <span class="cm"># 'abc...z'</span>
+string.digits          <span class="cm"># '0123456789'</span>
+string.punctuation     <span class="cm"># '!"#$%&amp;'...</span>
+
+t = string.Template(<span class="str">"Hello $name, you are $age"</span>)
+t.substitute(name=<span class="str">"Munim"</span>, age=<span class="num">25</span>)
+<span class="cm"># 'Hello Munim, you are 25'</span>
+
+t.safe_substitute(name=<span class="str">"Munim"</span>)
+<span class="cm"># 'Hello Munim, you are $age'</span>` },
+];
+
+// ── State ─────────────────────────────────────────────
+let activeLang   = 'cpp';
+let activeFilter = 'all';
+const openCards  = new Set();
+
+// ── Helpers ───────────────────────────────────────────
+function getActiveCats() { return activeLang === 'cpp' ? cppCats : pyCats; }
+function getActiveData() { return activeLang === 'cpp' ? cppData : pyData; }
 
 function catConfig(id) {
-  const map = {
-    io:   { pill:"c-io",   dot:"dot-io"   },
-    loop: { pill:"c-loop", dot:"dot-loop" },
-    file: { pill:"c-file", dot:"dot-file" },
-    mem:  { pill:"c-mem",  dot:"dot-mem"  },
-    str:  { pill:"c-str",  dot:"dot-str"  },
-    cond: { pill:"c-cond", dot:"dot-cond" },
-    data: { pill:"c-data", dot:"dot-data" },
-    func: { pill:"c-func", dot:"dot-func" },
-    t2:   { pill:"c-t2",   dot:"dot-t2"   },
-    algo: { pill:"c-algo", dot:"dot-algo" },
-  };
-  return map[id] || { pill:"c-func", dot:"dot-func" };
+  if (activeLang === 'cpp') {
+    const m = {
+      io:{pill:"c-io",dot:"dot-io"}, loop:{pill:"c-loop",dot:"dot-loop"},
+      file:{pill:"c-file",dot:"dot-file"}, mem:{pill:"c-mem",dot:"dot-mem"},
+      str:{pill:"c-str",dot:"dot-str"}, cond:{pill:"c-cond",dot:"dot-cond"},
+      data:{pill:"c-data",dot:"dot-data"}, func:{pill:"c-func",dot:"dot-func"},
+      t2:{pill:"c-t2",dot:"dot-t2"}, algo:{pill:"c-algo",dot:"dot-algo"},
+    };
+    return m[id] || {pill:"c-func",dot:"dot-func"};
+  } else {
+    const m = {
+      strings:{pill:"c-py-strings",dot:"dot-py-strings"},
+      lists:{pill:"c-py-lists",dot:"dot-py-lists"},
+      dicts:{pill:"c-py-dicts",dot:"dot-py-dicts"},
+      control:{pill:"c-py-control",dot:"dot-py-control"},
+      functions:{pill:"c-py-functions",dot:"dot-py-functions"},
+      comprehensions:{pill:"c-py-comprehensions",dot:"dot-py-comprehensions"},
+      classes:{pill:"c-py-classes",dot:"dot-py-classes"},
+      builtins:{pill:"c-py-builtins",dot:"dot-py-builtins"},
+      io:{pill:"c-py-io",dot:"dot-py-io"},
+      exceptions:{pill:"c-py-exceptions",dot:"dot-py-exceptions"},
+      async:{pill:"c-py-async",dot:"dot-py-async"},
+      stdlib:{pill:"c-py-stdlib",dot:"dot-py-stdlib"},
+      typing:{pill:"c-py-typing",dot:"dot-py-typing"},
+      debugging:{pill:"c-py-debugging",dot:"dot-py-debugging"},
+      numpy:{pill:"c-py-numpy",dot:"dot-py-numpy"},
+      pandas:{pill:"c-py-pandas",dot:"dot-py-pandas"},
+      functools:{pill:"c-py-functools",dot:"dot-py-functools"},
+      concurrency:{pill:"c-py-concurrency",dot:"dot-py-concurrency"},
+      networking:{pill:"c-py-networking",dot:"dot-py-networking"},
+      testing:{pill:"c-py-testing",dot:"dot-py-testing"},
+      torch:{pill:"c-py-torch",dot:"dot-py-torch"},
+      pydantic:{pill:"c-py-pydantic",dot:"dot-py-pydantic"},
+      text:{pill:"c-py-text",dot:"dot-py-text"},
+    };
+    return m[id] || {pill:"c-py-text",dot:"dot-py-text"};
+  }
 }
 
 function catLabel(id) {
-  const m = {
-    io:"I/O", loop:"Loops", file:"File I/O", mem:"Memory",
-    str:"Strings", cond:"Conditionals", data:"Data Structures",
-    func:"Functions", t2:"Tier 2", algo:"Algorithm"
-  };
-  return m[id] || id;
+  if (activeLang === 'cpp') {
+    const m = {
+      io:"I/O",loop:"Loops",file:"File I/O",mem:"Memory",str:"Strings",
+      cond:"Cond",data:"Data",func:"Func",t2:"Tier 2",algo:"Algo"
+    };
+    return m[id] || id;
+  } else {
+    const m = {
+      strings:"Str",lists:"List",dicts:"Dict",control:"Ctrl",
+      functions:"Fn",comprehensions:"Comp",classes:"Class",builtins:"Builtins",
+      io:"I/O",exceptions:"Exc",async:"Async",stdlib:"Stdlib",
+      typing:"Type",debugging:"Debug",numpy:"NumPy",pandas:"Pandas",
+      functools:"Func",concurrency:"Conc",networking:"Net",
+      testing:"Test",torch:"Torch",pydantic:"Pydantic",text:"Text"
+    };
+    return m[id] || id;
+  }
 }
 
 function escHtml(s) {
@@ -1865,18 +3136,15 @@ function escHtml(s) {
 }
 
 function highlight(code) {
-  // Tokenise raw code, then escape each token individually
   const tokens = [];
   let rest = code;
-
   const rules = [
-    { cls: 'cm', re: /^\/\/[^\n]*/ },
-    { cls: 'st', re: /^"(?:[^"\\]|\\.)*"/ },
-    { cls: 'st', re: /^'[^']*'/ },
-    { cls: 'kw', re: /^#?\b(include|int|double|float|char|bool|void|string|auto|const|using|namespace|return|if|else|while|for|do|break|continue|switch|case|default|new|delete|nullptr|true|false|class|struct|template|typename|std|size_t|long|short|unsigned)\b/ },
-    { cls: 'nm', re: /^\b\d+(\.\d+)?\b/ },
+    { cls:'cm', re:/^\/\/[^\n]*/ },
+    { cls:'st', re:/^"(?:[^"\\]|\\.)*"/ },
+    { cls:'st', re:/^'[^']*'/ },
+    { cls:'kw', re:/^#?\b(include|int|double|float|char|bool|void|string|auto|const|using|namespace|return|if|else|while|for|do|break|continue|switch|case|default|new|delete|nullptr|true|false|class|struct|template|typename|std|size_t|long|short|unsigned)\b/ },
+    { cls:'nm', re:/^\b\d+(\.\d+)?\b/ },
   ];
-
   while (rest.length) {
     let matched = false;
     for (const rule of rules) {
@@ -1888,118 +3156,136 @@ function highlight(code) {
         break;
       }
     }
-    if (!matched) {
-      tokens.push(escHtml(rest[0]));
-      rest = rest.slice(1);
-    }
+    if (!matched) { tokens.push(escHtml(rest[0])); rest = rest.slice(1); }
   }
   return tokens.join('');
 }
 
+// ── Language switch ────────────────────────────────────
+function setLang(lang) {
+  activeLang = lang;
+  activeFilter = 'all';
+  openCards.clear();
+
+  const isCpp = lang === 'cpp';
+  document.getElementById('btn-cpp').className = 'lang-btn' + (isCpp ? ' active-cpp' : '');
+  document.getElementById('btn-py').className  = 'lang-btn' + (!isCpp ? ' active-py' : '');
+  document.getElementById('logo-lang').textContent = isCpp ? 'C++' : 'Python';
+  const badge = document.getElementById('lang-badge');
+  badge.textContent = isCpp ? 'v2.0' : '3.x';
+  badge.className = 'logo-badge' + (isCpp ? '' : ' py');
+  const searchEl = document.getElementById('search');
+  searchEl.className = isCpp ? '' : 'py-focus';
+  searchEl.placeholder = isCpp ? 'Search functions, keywords…' : 'Search snippets…';
+
+  buildSidebar();
+  render();
+}
+
+// ── Sidebar ────────────────────────────────────────────
 function buildSidebar() {
+  const cats  = getActiveCats();
+  const items = getActiveData();
   const counts = {};
-  data.forEach(d => { counts[d.cat] = (counts[d.cat]||0) + 1; });
-  const sidebar = document.getElementById("sidebar");
-  sidebar.innerHTML = `<div class="sidebar-label">Categories</div>` +
+  items.forEach(d => { counts[d.cat] = (counts[d.cat]||0) + 1; });
+
+  const sidebar = document.getElementById('sidebar');
+  const langLabel = activeLang === 'cpp' ? 'C++ Categories' : 'Python Categories';
+  sidebar.innerHTML = `<div class="sidebar-label">${langLabel}</div>` +
     cats.map(c => {
-      const cnt = c.id === "all" ? data.length : (counts[c.id]||0);
+      const cnt = c.id === 'all' ? items.length : (counts[c.id]||0);
       const cfg = catConfig(c.id);
       return `<div class="nav-item ${activeFilter===c.id?'active':''}" onclick="setFilter('${c.id}')">
         <span class="nav-dot ${cfg.dot}"></span>
         ${c.label}
         <span class="nav-count">${cnt}</span>
       </div>`;
-    }).join("");
+    }).join('');
 }
 
+// ── Render ─────────────────────────────────────────────
 function render() {
-  const q = document.getElementById("search").value.toLowerCase().trim();
-  const main = document.getElementById("main");
-
-  let items = data.filter(d => {
-    if (activeFilter !== "all" && d.cat !== activeFilter) return false;
-    if (q) return d.title.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q) || d.code.toLowerCase().includes(q);
+  const q    = document.getElementById('search').value.toLowerCase().trim();
+  const main = document.getElementById('main');
+  const items = getActiveData().filter(d => {
+    if (activeFilter !== 'all' && d.cat !== activeFilter) return false;
+    if (q) return d.title.toLowerCase().includes(q)
+                || d.desc.toLowerCase().includes(q)
+                || d.code.toLowerCase().includes(q);
     return true;
   });
 
-  document.getElementById("counter").textContent = `${items.length} snippets`;
+  document.getElementById('counter').textContent = `${items.length} snippets`;
 
   if (!items.length) {
-    main.innerHTML = `<div class="grid"><div class="no-results">no results for "${q}"</div></div>`;
+    main.innerHTML = `<div class="grid"><div class="no-results">no results for "${escHtml(q)}"</div></div>`;
     return;
   }
 
+  const isPy = activeLang === 'py';
   main.innerHTML = `<div class="grid">${items.map(item => {
-    const id = item.cat + "_" + item.title.replace(/\W+/g,"_");
+    const id     = item.cat + '_' + item.title.replace(/\W+/g,'_');
     const isOpen = openCards.has(id);
-    const cfg = catConfig(item.cat);
-    return `<div class="card ${isOpen?'open':''}" id="card_${id}">
+    const cfg    = catConfig(item.cat);
+    const codeContent = isPy ? item.code : highlight(item.code);
+    const hlClass = isPy ? ' py-hl' : '';
+    const cardClass = isPy ? ' py-card' : '';
+    return `<div class="card${cardClass}${isOpen?' open':''}" id="card_${id}">
       <div class="card-head" onclick="toggleCard('${id}')">
         <div class="card-title-row">
           <span class="cat-pill ${cfg.pill}">${catLabel(item.cat)}</span>
-          <span class="card-title">${item.title}</span>
+          <span class="card-title">${escHtml(item.title)}</span>
         </div>
         <span class="toggle-btn">▶</span>
       </div>
       <div class="card-body">
-        <p class="card-desc">${item.desc}</p>
-        <div class="code-block" id="code_${id}"><code>${highlight(item.code)}</code><button class="copy-btn" onclick="copyCode(event,'${id}')">copy</button></div>
+        <p class="card-desc">${escHtml(item.desc)}</p>
+        <div class="code-block${hlClass}" id="code_${id}"><code>${codeContent}</code><button class="copy-btn" onclick="copyCode(event,'${id}')">copy</button></div>
       </div>
     </div>`;
-  }).join("")}</div>`;
+  }).join('')}</div>`;
 }
 
+// ── Card interactions ──────────────────────────────────
 function toggleCard(id) {
-  if (openCards.has(id)) openCards.delete(id);
-  else openCards.add(id);
+  if (openCards.has(id)) openCards.delete(id); else openCards.add(id);
   render();
 }
-
 function setFilter(cat) {
   activeFilter = cat;
   buildSidebar();
   render();
 }
-
 function expandAll() {
-  const q = document.getElementById("search").value.toLowerCase().trim();
-  data.filter(d => {
-    if (activeFilter !== "all" && d.cat !== activeFilter) return false;
-    if (q) return d.title.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q) || d.code.toLowerCase().includes(q);
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  getActiveData().filter(d => {
+    if (activeFilter !== 'all' && d.cat !== activeFilter) return false;
+    if (q) return d.title.toLowerCase().includes(q)||d.desc.toLowerCase().includes(q)||d.code.toLowerCase().includes(q);
     return true;
-  }).forEach(d => {
-    const id = d.cat + "_" + d.title.replace(/\W+/g,"_");
-    openCards.add(id);
-  });
+  }).forEach(d => openCards.add(d.cat+'_'+d.title.replace(/\W+/g,'_')));
   render();
 }
-
-function collapseAll() {
-  openCards.clear();
-  render();
-}
-
+function collapseAll() { openCards.clear(); render(); }
 function copyCode(e, id) {
   e.stopPropagation();
-  const el = document.getElementById("code_" + id);
-  const text = el.querySelector("code").innerText;
+  const el   = document.getElementById('code_' + id);
+  const text = el.querySelector('code').innerText;
   navigator.clipboard.writeText(text).then(() => {
-    const btn = el.querySelector(".copy-btn");
-    btn.textContent = "copied!";
-    btn.classList.add("copied");
-    setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 1500);
+    const btn = el.querySelector('.copy-btn');
+    btn.textContent = 'copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1500);
   });
 }
 
-// keyboard shortcut: / to focus search
-document.addEventListener("keydown", e => {
-  if (e.key === "/" && document.activeElement !== document.getElementById("search")) {
-    e.preventDefault();
-    document.getElementById("search").focus();
+// keyboard: / to focus search, Escape to blur
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && document.activeElement !== document.getElementById('search')) {
+    e.preventDefault(); document.getElementById('search').focus();
   }
-  if (e.key === "Escape") document.getElementById("search").blur();
+  if (e.key === 'Escape') document.getElementById('search').blur();
 });
 
+// ── Init ──────────────────────────────────────────────
 buildSidebar();
 render();
 </script>

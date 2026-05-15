@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Quick Ref</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f14;
+    --surface: #15161e;
+    --card: #1a1b26;
+    --border: #2a2b3d;
+    --accent: #7aa2f7;
+    --accent2: #9ece6a;
+    --accent3: #f7768e;
+    --accent4: #e0af68;
+    --accent5: #bb9af7;
+    --text: #c0caf5;
+    --muted: #565f89;
+    --tag-bg: #1e2030;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  header {
+    padding: 48px 40px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+
+  .logo-area h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #fff;
+  }
+
+  .logo-area h1 span {
+    color: var(--accent);
+  }
+
+  .logo-area p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .version-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    color: var(--muted);
+  }
+
+  /* Search + filter */
+  .controls {
+    padding: 24px 40px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+    max-width: 380px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 0.9rem;
+    pointer-events: none;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px 10px 40px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input[type="text"]:focus {
+    border-color: var(--accent);
+  }
+
+  input[type="text"]::placeholder { color: var(--muted); }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 14px;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #0e0f14; }
+
+  /* Count */
+  .count-bar {
+    padding: 14px 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Grid */
+  .grid {
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.3s ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    padding: 14px 16px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .card:not(.collapsed) .card-header {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .chevron {
+    color: var(--muted);
+    font-size: 0.7rem;
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .card.collapsed .chevron { transform: rotate(-90deg); }
+
+  /* Collapsible body */
+  .card-body {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.28s ease, opacity 0.28s ease;
+    opacity: 1;
+  }
+
+  .card.collapsed .card-body {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+
+  .card-body-inner {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+
+  .card-tags {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .tag-strings   { background: rgba(122,162,247,0.15); color: var(--accent); }
+  .tag-lists     { background: rgba(158,206,106,0.15); color: var(--accent2); }
+  .tag-dicts     { background: rgba(247,118,142,0.15); color: var(--accent3); }
+  .tag-control   { background: rgba(224,175,104,0.15); color: var(--accent4); }
+  .tag-functions { background: rgba(187,154,247,0.15); color: var(--accent5); }
+  .tag-io        { background: rgba(122,162,247,0.12); color: #73daca; }
+  .tag-classes   { background: rgba(247,118,142,0.12); color: #ff9e64; }
+  .tag-builtins  { background: rgba(158,206,106,0.12); color: #b4f9f8; }
+  .tag-exceptions{ background: rgba(224,175,104,0.12); color: #f7768e; }
+  .tag-comprehensions { background: rgba(187,154,247,0.12); color: #c0caf5; }
+  .tag-async    { background: rgba(115,218,202,0.15); color: #73daca; }
+  .tag-stdlib   { background: rgba(224,175,104,0.15); color: var(--accent4); }
+  .tag-typing   { background: rgba(122,162,247,0.15); color: var(--accent); }
+  .tag-debugging{ background: rgba(247,118,142,0.15); color: var(--accent3); }
+  .tag-numpy    { background: rgba(158,206,106,0.15); color: var(--accent2); }
+  .tag-pandas      { background: rgba(122,162,247,0.15); color: #7dcfff; }
+  .tag-functools   { background: rgba(187,154,247,0.15); color: var(--accent5); }
+  .tag-concurrency { background: rgba(247,118,142,0.15); color: #ff9e64; }
+  .tag-networking  { background: rgba(115,218,202,0.15); color: #73daca; }
+  .tag-testing     { background: rgba(158,206,106,0.15); color: var(--accent2); }
+  .tag-torch       { background: rgba(247,118,142,0.15); color: var(--accent3); }
+  .tag-pydantic    { background: rgba(224,175,104,0.15); color: var(--accent4); }
+  .tag-text        { background: rgba(192,202,245,0.12); color: var(--text); }
+
+  .card-desc {
+    padding: 10px 16px 8px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  pre {
+    margin: 0 12px 12px;
+    background: #0d0e12;
+    border-radius: 8px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    border: 1px solid #1e2030;
+    flex: 1;
+    position: relative;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--border);
+    border: none;
+    border-radius: 5px;
+    padding: 3px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .copy-btn:hover { background: var(--accent); color: #0e0f14; }
+  .copy-btn.copied { background: var(--accent2); color: #0e0f14; }
+
+  /* Syntax highlighting */
+  .kw  { color: #bb9af7; }
+  .fn  { color: #7aa2f7; }
+  .str { color: #9ece6a; }
+  .cm  { color: #565f89; font-style: italic; }
+  .num { color: #ff9e64; }
+  .cl  { color: #e0af68; }
+  .bl  { color: #f7768e; }
+
+  /* Empty state */
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+  }
+
+  /* Footer */
+  footer {
+    padding: 32px 40px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 600px) {
+    header, .controls, .count-bar, .grid, footer { padding-left: 16px; padding-right: 16px; }
+    header { padding-top: 24px; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-area">
+    <h1>py<span>.</span>ref</h1>
+    <p>// quick reference for when your brain goes blank</p>
+  </div>
+  <span class="version-badge">Python 3.x</span>
+</header>
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="searchInput" placeholder="search cards..." />
+  </div>
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-cat="all">All</button>
+    <button class="filter-btn" data-cat="strings">Strings</button>
+    <button class="filter-btn" data-cat="lists">Lists</button>
+    <button class="filter-btn" data-cat="dicts">Dicts</button>
+    <button class="filter-btn" data-cat="control">Control</button>
+    <button class="filter-btn" data-cat="functions">Functions</button>
+    <button class="filter-btn" data-cat="comprehensions">Comprehensions</button>
+    <button class="filter-btn" data-cat="classes">Classes</button>
+    <button class="filter-btn" data-cat="builtins">Builtins</button>
+    <button class="filter-btn" data-cat="io">I/O</button>
+    <button class="filter-btn" data-cat="exceptions">Exceptions</button>
+    <button class="filter-btn" data-cat="async">Async</button>
+    <button class="filter-btn" data-cat="stdlib">Stdlib</button>
+    <button class="filter-btn" data-cat="typing">Typing</button>
+    <button class="filter-btn" data-cat="debugging">Debugging</button>
+    <button class="filter-btn" data-cat="numpy">NumPy</button>
+    <button class="filter-btn" data-cat="pandas">Pandas</button>
+    <button class="filter-btn" data-cat="functools">Functools</button>
+    <button class="filter-btn" data-cat="concurrency">Concurrency</button>
+    <button class="filter-btn" data-cat="networking">Networking</button>
+    <button class="filter-btn" data-cat="testing">Testing</button>
+    <button class="filter-btn" data-cat="torch">PyTorch</button>
+    <button class="filter-btn" data-cat="pydantic">Pydantic</button>
+    <button class="filter-btn" data-cat="text">Text</button>
+  </div>
+</div>
+
+<div class="count-bar" id="countBar">— cards</div>
+
+<div class="grid" id="grid"></div>
+
+<footer>built for when syntax escapes you mid-flow · sheikhmunim</footer>
+
+<script>
+const cards = [
+  // ── STRINGS ──────────────────────────────────────────
+  {
+    title: "String Methods",
+    cat: "strings",
+    desc: "Common string operations and methods.",
+    code: `s = <span class="str">"hello world"</span>
+s.upper()          <span class="cm"># "HELLO WORLD"</span>
+s.lower()          <span class="cm"># "hello world"</span>
+s.strip()          <span class="cm"># remove whitespace</span>
+s.replace(<span class="str">"l"</span>, <span class="str">"r"</span>)  <span class="cm"># "herro worrd"</span>
+s.split(<span class="str">" "</span>)       <span class="cm"># ["hello", "world"]</span>
+s.startswith(<span class="str">"h"</span>)  <span class="cm"># True</span>
+s.find(<span class="str">"world"</span>)    <span class="cm"># 6</span>
+len(s)             <span class="cm"># 11</span>`
+  },
+  {
+    title: "f-strings",
+    cat: "strings",
+    desc: "Format strings with expressions inline.",
+    code: `name = <span class="str">"Sheikh"</span>
+score = <span class="num">42.567</span>
+
+<span class="cm"># basic</span>
+<span class="fn">print</span>(<span class="str">f"Hello, {name}!"</span>)
+
+<span class="cm"># formatting</span>
+<span class="fn">print</span>(<span class="str">f"Score: {score:.2f}"</span>)  <span class="cm"># 42.57</span>
+<span class="fn">print</span>(<span class="str">f"{name!r}"</span>)           <span class="cm"># 'Sheikh'</span>
+<span class="fn">print</span>(<span class="str">f"{score:>10.1f}"</span>)     <span class="cm"># right-align</span>
+<span class="fn">print</span>(<span class="str">f"{2 ** 10 = }"</span>)       <span class="cm"># debug: 2**10=1024</span>`
+  },
+  {
+    title: "String Slicing",
+    cat: "strings",
+    desc: "Index and slice strings efficiently.",
+    code: `s = <span class="str">"python"</span>
+s[<span class="num">0</span>]      <span class="cm"># 'p'</span>
+s[-<span class="num">1</span>]     <span class="cm"># 'n'</span>
+s[<span class="num">1</span>:<span class="num">4</span>]    <span class="cm"># 'yth'</span>
+s[:<span class="num">3</span>]     <span class="cm"># 'pyt'</span>
+s[<span class="num">3</span>:]     <span class="cm"># 'hon'</span>
+s[::-<span class="num">1</span>]   <span class="cm"># 'nohtyp' (reverse)</span>
+s[::<span class="num">2</span>]    <span class="cm"># 'pto' (every 2nd)</span>`
+  },
+  {
+    title: "join & split",
+    cat: "strings",
+    desc: "Convert between strings and lists.",
+    code: `words = [<span class="str">"cat"</span>, <span class="str">"dog"</span>, <span class="str">"bird"</span>]
+
+<span class="cm"># join list → string</span>
+result = <span class="str">", "</span>.join(words)
+<span class="cm"># "cat, dog, bird"</span>
+
+<span class="cm"># split string → list</span>
+line = <span class="str">"a,b,c"</span>
+parts = line.split(<span class="str">","</span>)
+<span class="cm"># ["a", "b", "c"]</span>
+
+<span class="cm"># split with max splits</span>
+<span class="str">"a:b:c"</span>.split(<span class="str">":"</span>, <span class="num">1</span>)
+<span class="cm"># ["a", "b:c"]</span>`
+  },
+
+  // ── LISTS ────────────────────────────────────────────
+  {
+    title: "List Operations",
+    cat: "lists",
+    desc: "Core list manipulation methods.",
+    code: `lst = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]
+
+lst.append(<span class="num">9</span>)        <span class="cm"># add to end</span>
+lst.insert(<span class="num">0</span>, <span class="num">99</span>)   <span class="cm"># insert at index</span>
+lst.pop()            <span class="cm"># remove & return last</span>
+lst.pop(<span class="num">0</span>)          <span class="cm"># remove & return index 0</span>
+lst.remove(<span class="num">1</span>)       <span class="cm"># remove first occurrence</span>
+lst.sort()           <span class="cm"># in-place sort</span>
+lst.reverse()        <span class="cm"># in-place reverse</span>
+lst.index(<span class="num">4</span>)        <span class="cm"># find index of value</span>
+lst.count(<span class="num">1</span>)        <span class="cm"># count occurrences</span>`
+  },
+  {
+    title: "List Slicing & Copy",
+    cat: "lists",
+    desc: "Slicing, copying, and unpacking lists.",
+    code: `lst = [<span class="num">0</span>, <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
+
+lst[<span class="num">1</span>:<span class="num">3</span>]          <span class="cm"># [1, 2]</span>
+lst[-<span class="num">2</span>:]          <span class="cm"># [3, 4]</span>
+lst[::<span class="num">2</span>]          <span class="cm"># [0, 2, 4]</span>
+
+<span class="cm"># shallow copy</span>
+copy = lst[:]
+copy = lst.copy()
+
+<span class="cm"># unpack</span>
+a, b, *rest = lst
+<span class="cm"># a=0, b=1, rest=[2,3,4]</span>
+
+<span class="cm"># zip two lists</span>
+<span class="fn">list</span>(<span class="fn">zip</span>([<span class="num">1</span>,<span class="num">2</span>], [<span class="str">"a"</span>,<span class="str">"b"</span>]))
+<span class="cm"># [(1,'a'), (2,'b')]</span>`
+  },
+  {
+    title: "Sorting",
+    cat: "lists",
+    desc: "Sort lists with keys and custom logic.",
+    code: `nums = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]
+
+<span class="cm"># returns new list</span>
+<span class="fn">sorted</span>(nums)
+<span class="fn">sorted</span>(nums, reverse=<span class="bl">True</span>)
+
+<span class="cm"># sort by key</span>
+words = [<span class="str">"banana"</span>, <span class="str">"fig"</span>, <span class="str">"apple"</span>]
+<span class="fn">sorted</span>(words, key=<span class="fn">len</span>)
+<span class="cm"># ['fig', 'apple', 'banana']</span>
+
+<span class="cm"># sort list of dicts</span>
+people = [{<span class="str">"age"</span>: <span class="num">30</span>}, {<span class="str">"age"</span>: <span class="num">25</span>}]
+<span class="fn">sorted</span>(people, key=<span class="kw">lambda</span> x: x[<span class="str">"age"</span>])`
+  },
+
+  // ── DICTS ────────────────────────────────────────────
+  {
+    title: "Dict Operations",
+    cat: "dicts",
+    desc: "Creating and manipulating dictionaries.",
+    code: `d = {<span class="str">"name"</span>: <span class="str">"Munim"</span>, <span class="str">"age"</span>: <span class="num">25</span>}
+
+d[<span class="str">"city"</span>] = <span class="str">"Melbourne"</span>  <span class="cm"># add key</span>
+d.get(<span class="str">"age"</span>)            <span class="cm"># 25 (safe)</span>
+d.get(<span class="str">"x"</span>, <span class="num">0</span>)          <span class="cm"># 0 (default)</span>
+d.pop(<span class="str">"age"</span>)           <span class="cm"># removes & returns</span>
+d.keys()                <span class="cm"># dict_keys([...])</span>
+d.values()              <span class="cm"># dict_values([...])</span>
+d.items()               <span class="cm"># dict_items([...])</span>
+d.update({<span class="str">"x"</span>: <span class="num">1</span>})     <span class="cm"># merge/update</span>
+<span class="str">"name"</span> <span class="kw">in</span> d           <span class="cm"># True</span>`
+  },
+  {
+    title: "Dict Merge & Unpack",
+    cat: "dicts",
+    desc: "Modern dict merging patterns.",
+    code: `a = {<span class="str">"x"</span>: <span class="num">1</span>, <span class="str">"y"</span>: <span class="num">2</span>}
+b = {<span class="str">"y"</span>: <span class="num">99</span>, <span class="str">"z"</span>: <span class="num">3</span>}
+
+<span class="cm"># merge (Python 3.9+)</span>
+merged = a | b
+<span class="cm"># {"x":1, "y":99, "z":3}</span>
+
+<span class="cm"># unpack merge</span>
+merged = {**a, **b}
+
+<span class="cm"># setdefault</span>
+d = {}
+d.setdefault(<span class="str">"count"</span>, <span class="num">0</span>)
+d[<span class="str">"count"</span>] += <span class="num">1</span>
+
+<span class="cm"># defaultdict</span>
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+dd = defaultdict(<span class="fn">list</span>)
+dd[<span class="str">"a"</span>].append(<span class="num">1</span>)`
+  },
+
+  // ── CONTROL ──────────────────────────────────────────
+  {
+    title: "for / while loops",
+    cat: "control",
+    desc: "Loop patterns including enumerate and range.",
+    code: `<span class="cm"># basic range</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>): ...      <span class="cm"># 0–4</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">6</span>): ...  <span class="cm"># 1–5</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0</span>, <span class="num">10</span>, <span class="num">2</span>): ... <span class="cm"># even</span>
+
+<span class="cm"># enumerate</span>
+<span class="kw">for</span> i, val <span class="kw">in</span> <span class="fn">enumerate</span>(lst):
+    <span class="fn">print</span>(i, val)
+
+<span class="cm"># while with break/continue</span>
+<span class="kw">while</span> <span class="bl">True</span>:
+    <span class="kw">if</span> done: <span class="kw">break</span>
+    <span class="kw">if</span> skip: <span class="kw">continue</span>`
+  },
+  {
+    title: "Conditionals",
+    cat: "control",
+    desc: "if/elif/else, ternary, and match-case.",
+    code: `<span class="cm"># standard</span>
+<span class="kw">if</span> x > <span class="num">0</span>:
+    <span class="fn">print</span>(<span class="str">"positive"</span>)
+<span class="kw">elif</span> x == <span class="num">0</span>:
+    <span class="fn">print</span>(<span class="str">"zero"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"negative"</span>)
+
+<span class="cm"># ternary</span>
+label = <span class="str">"pos"</span> <span class="kw">if</span> x > <span class="num">0</span> <span class="kw">else</span> <span class="str">"neg"</span>
+
+<span class="cm"># match-case (Python 3.10+)</span>
+<span class="kw">match</span> command:
+    <span class="kw">case</span> <span class="str">"quit"</span>: quit()
+    <span class="kw">case</span> <span class="str">"go"</span>:  move()
+    <span class="kw">case</span> _:      <span class="fn">print</span>(<span class="str">"unknown"</span>)`
+  },
+
+  // ── FUNCTIONS ────────────────────────────────────────
+  {
+    title: "Function Basics",
+    cat: "functions",
+    desc: "Defining functions with defaults and type hints.",
+    code: `<span class="cm"># basic</span>
+<span class="kw">def</span> <span class="fn">greet</span>(name: <span class="cl">str</span>, loud: <span class="cl">bool</span> = <span class="bl">False</span>) -> <span class="cl">str</span>:
+    msg = <span class="str">f"Hello, {name}"</span>
+    <span class="kw">return</span> msg.upper() <span class="kw">if</span> loud <span class="kw">else</span> msg
+
+<span class="cm"># *args and **kwargs</span>
+<span class="kw">def</span> <span class="fn">add</span>(*nums):
+    <span class="kw">return</span> <span class="fn">sum</span>(nums)
+
+<span class="kw">def</span> <span class="fn">info</span>(**kwargs):
+    <span class="kw">for</span> k, v <span class="kw">in</span> kwargs.items():
+        <span class="fn">print</span>(<span class="str">f"{k}: {v}"</span>)
+
+<span class="cm"># lambda</span>
+square = <span class="kw">lambda</span> x: x ** <span class="num">2</span>`
+  },
+  {
+    title: "Decorators",
+    cat: "functions",
+    desc: "Common decorator patterns.",
+    code: `<span class="kw">import</span> time
+<span class="kw">from</span> functools <span class="kw">import</span> wraps
+
+<span class="kw">def</span> <span class="fn">timer</span>(func):
+    <span class="kw">@</span><span class="fn">wraps</span>(func)
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        t = time.time()
+        result = func(*args, **kwargs)
+        <span class="fn">print</span>(<span class="str">f"{func.__name__}: {time.time()-t:.3f}s"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper
+
+<span class="kw">@</span><span class="fn">timer</span>
+<span class="kw">def</span> <span class="fn">slow_fn</span>():
+    time.sleep(<span class="num">0.1</span>)`
+  },
+  {
+    title: "Generators",
+    cat: "functions",
+    desc: "Lazy sequences with yield.",
+    code: `<span class="cm"># generator function</span>
+<span class="kw">def</span> <span class="fn">count_up</span>(n):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+        <span class="kw">yield</span> i
+
+<span class="kw">for</span> x <span class="kw">in</span> <span class="fn">count_up</span>(<span class="num">5</span>):
+    <span class="fn">print</span>(x)   <span class="cm"># 0 1 2 3 4</span>
+
+<span class="cm"># generator expression</span>
+squares = (x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>))
+
+<span class="cm"># next()</span>
+gen = <span class="fn">count_up</span>(<span class="num">3</span>)
+<span class="fn">next</span>(gen)  <span class="cm"># 0</span>
+<span class="fn">next</span>(gen)  <span class="cm"># 1</span>`
+  },
+
+  // ── COMPREHENSIONS ───────────────────────────────────
+  {
+    title: "List Comprehensions",
+    cat: "comprehensions",
+    desc: "Build lists in one line.",
+    code: `nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+
+<span class="cm"># basic</span>
+squares = [x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> nums]
+
+<span class="cm"># with condition</span>
+evens = [x <span class="kw">for</span> x <span class="kw">in</span> nums <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span>]
+
+<span class="cm"># nested</span>
+flat = [x <span class="kw">for</span> row <span class="kw">in</span> matrix <span class="kw">for</span> x <span class="kw">in</span> row]
+
+<span class="cm"># dict comprehension</span>
+sq_map = {x: x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> nums}
+
+<span class="cm"># set comprehension</span>
+unique = {x % <span class="num">3</span> <span class="kw">for</span> x <span class="kw">in</span> nums}`
+  },
+
+  // ── CLASSES ──────────────────────────────────────────
+  {
+    title: "Class Basics",
+    cat: "classes",
+    desc: "Define classes with init, methods, and properties.",
+    code: `<span class="kw">class</span> <span class="cl">Robot</span>:
+    species = <span class="str">"TIAGo"</span>  <span class="cm"># class var</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name: <span class="cl">str</span>):
+        <span class="kw">self</span>.name = name   <span class="cm"># instance var</span>
+        <span class="kw">self</span>._speed = <span class="num">0</span>
+
+    <span class="kw">def</span> <span class="fn">greet</span>(<span class="kw">self</span>) -> <span class="cl">str</span>:
+        <span class="kw">return</span> <span class="str">f"I am {self.name}"</span>
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">speed</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="kw">self</span>._speed
+
+    <span class="kw">@speed.setter</span>
+    <span class="kw">def</span> <span class="fn">speed</span>(<span class="kw">self</span>, v): <span class="kw">self</span>._speed = <span class="fn">max</span>(<span class="num">0</span>, v)`
+  },
+  {
+    title: "Inheritance",
+    cat: "classes",
+    desc: "Subclassing and super() usage.",
+    code: `<span class="kw">class</span> <span class="cl">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name):
+        <span class="kw">self</span>.name = name
+
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="str">"..."</span>
+
+<span class="kw">class</span> <span class="cl">Dog</span>(<span class="cl">Animal</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name, breed):
+        <span class="fn">super</span>().__init__(name)
+        <span class="kw">self</span>.breed = breed
+
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="str">"Woof!"</span>
+
+d = <span class="cl">Dog</span>(<span class="str">"Rex"</span>, <span class="str">"Husky"</span>)
+<span class="fn">isinstance</span>(d, <span class="cl">Animal</span>)  <span class="cm"># True</span>`
+  },
+  {
+    title: "Dataclasses",
+    cat: "classes",
+    desc: "Boilerplate-free data containers.",
+    code: `<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+
+<span class="kw">@dataclass</span>
+<span class="kw">class</span> <span class="cl">Point</span>:
+    x: <span class="cl">float</span>
+    y: <span class="cl">float</span>
+    label: <span class="cl">str</span> = <span class="str">"origin"</span>
+    tags: <span class="cl">list</span> = field(default_factory=<span class="fn">list</span>)
+
+p = <span class="cl">Point</span>(<span class="num">1.0</span>, <span class="num">2.0</span>)
+<span class="fn">print</span>(p)
+<span class="cm"># Point(x=1.0, y=2.0, label='origin', tags=[])</span>
+
+<span class="cm"># frozen (immutable)</span>
+<span class="kw">@dataclass</span>(frozen=<span class="bl">True</span>)
+<span class="kw">class</span> <span class="cl">Config</span>:
+    debug: <span class="cl">bool</span> = <span class="bl">False</span>`
+  },
+
+  // ── BUILTINS ─────────────────────────────────────────
+  {
+    title: "map / filter / reduce",
+    cat: "builtins",
+    desc: "Functional-style operations on iterables.",
+    code: `<span class="kw">from</span> functools <span class="kw">import</span> reduce
+
+nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
+
+<span class="cm"># map</span>
+<span class="fn">list</span>(<span class="fn">map</span>(<span class="kw">lambda</span> x: x**<span class="num">2</span>, nums))
+<span class="cm"># [1, 4, 9, 16]</span>
+
+<span class="cm"># filter</span>
+<span class="fn">list</span>(<span class="fn">filter</span>(<span class="kw">lambda</span> x: x > <span class="num">2</span>, nums))
+<span class="cm"># [3, 4]</span>
+
+<span class="cm"># reduce</span>
+<span class="fn">reduce</span>(<span class="kw">lambda</span> a, b: a + b, nums)
+<span class="cm"># 10</span>
+
+<span class="cm"># any / all</span>
+<span class="fn">any</span>(x > <span class="num">3</span> <span class="kw">for</span> x <span class="kw">in</span> nums)  <span class="cm"># True</span>
+<span class="fn">all</span>(x > <span class="num">0</span> <span class="kw">for</span> x <span class="kw">in</span> nums)  <span class="cm"># True</span>`
+  },
+  {
+    title: "zip / enumerate / chain",
+    cat: "builtins",
+    desc: "Powerful iteration utilities.",
+    code: `<span class="kw">from</span> itertools <span class="kw">import</span> chain
+
+a = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+b = [<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>]
+
+<span class="cm"># zip</span>
+<span class="fn">list</span>(<span class="fn">zip</span>(a, b))
+<span class="cm"># [(1,'a'), (2,'b'), (3,'c')]</span>
+
+<span class="cm"># unzip</span>
+x, y = <span class="fn">zip</span>(*<span class="fn">zip</span>(a, b))
+
+<span class="cm"># enumerate</span>
+<span class="kw">for</span> i, v <span class="kw">in</span> <span class="fn">enumerate</span>(b, start=<span class="num">1</span>):
+    <span class="fn">print</span>(i, v)   <span class="cm"># 1 a, 2 b ...</span>
+
+<span class="cm"># chain flat iteration</span>
+<span class="fn">list</span>(<span class="fn">chain</span>([<span class="num">1</span>,<span class="num">2</span>], [<span class="num">3</span>,<span class="num">4</span>]))
+<span class="cm"># [1, 2, 3, 4]</span>`
+  },
+  {
+    title: "Common Builtins",
+    cat: "builtins",
+    desc: "Frequently needed built-in functions.",
+    code: `<span class="fn">abs</span>(-<span class="num">5</span>)           <span class="cm"># 5</span>
+<span class="fn">round</span>(<span class="num">3.7</span>)         <span class="cm"># 4</span>
+<span class="fn">round</span>(<span class="num">3.14159</span>, <span class="num">2</span>)  <span class="cm"># 3.14</span>
+<span class="fn">min</span>([<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>])       <span class="cm"># 1</span>
+<span class="fn">max</span>([<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>])       <span class="cm"># 3</span>
+<span class="fn">sum</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])       <span class="cm"># 6</span>
+<span class="fn">len</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])       <span class="cm"># 3</span>
+<span class="fn">type</span>(<span class="num">42</span>)            <span class="cm"># &lt;class 'int'&gt;</span>
+<span class="fn">isinstance</span>(<span class="num">42</span>, <span class="cl">int</span>) <span class="cm"># True</span>
+<span class="fn">id</span>(obj)             <span class="cm"># memory address</span>
+<span class="fn">dir</span>(obj)            <span class="cm"># list attributes</span>
+<span class="fn">vars</span>(obj)           <span class="cm"># instance __dict__</span>`
+  },
+
+  // ── I/O ──────────────────────────────────────────────
+  {
+    title: "File I/O",
+    cat: "io",
+    desc: "Reading and writing files safely.",
+    code: `<span class="cm"># read text</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"file.txt"</span>) <span class="kw">as</span> f:
+    content = f.read()         <span class="cm"># whole file</span>
+    lines = f.readlines()      <span class="cm"># list of lines</span>
+
+<span class="cm"># write text</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"out.txt"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    f.write(<span class="str">"hello\n"</span>)
+
+<span class="cm"># append</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"out.txt"</span>, <span class="str">"a"</span>) <span class="kw">as</span> f:
+    f.write(<span class="str">"more\n"</span>)
+
+<span class="cm"># binary</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"img.jpg"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    data = f.read()`
+  },
+  {
+    title: "JSON & CSV",
+    cat: "io",
+    desc: "Serialization and data file handling.",
+    code: `<span class="kw">import</span> json, csv
+
+<span class="cm"># JSON load/dump</span>
+data = json.loads(<span class="str">'{"x":1}'</span>)
+text = json.dumps(data, indent=<span class="num">2</span>)
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.json"</span>) <span class="kw">as</span> f:
+    data = json.load(f)
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"out.json"</span>, <span class="str">"w"</span>) <span class="kw">as</span> f:
+    json.dump(data, f, indent=<span class="num">2</span>)
+
+<span class="cm"># CSV reader</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.csv"</span>) <span class="kw">as</span> f:
+    reader = csv.DictReader(f)
+    rows = <span class="fn">list</span>(reader)`
+  },
+  {
+    title: "pathlib",
+    cat: "io",
+    desc: "Modern path handling — better than os.path.",
+    code: `<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+
+p = Path(<span class="str">"data/results.csv"</span>)
+
+p.exists()           <span class="cm"># bool</span>
+p.suffix             <span class="cm"># '.csv'</span>
+p.stem               <span class="cm"># 'results'</span>
+p.parent             <span class="cm"># Path('data')</span>
+p.name               <span class="cm"># 'results.csv'</span>
+p.read_text()        <span class="cm"># file contents</span>
+p.write_text(<span class="str">"hi"</span>)  <span class="cm"># write</span>
+p.mkdir(parents=<span class="bl">True</span>, exist_ok=<span class="bl">True</span>)
+
+<span class="cm"># glob</span>
+<span class="fn">list</span>(Path(<span class="str">"."</span>).glob(<span class="str">"**/*.py"</span>))`
+  },
+
+  // ── EXCEPTIONS ───────────────────────────────────────
+  {
+    title: "try / except / finally",
+    cat: "exceptions",
+    desc: "Catching and handling exceptions cleanly.",
+    code: `<span class="kw">try</span>:
+    result = <span class="num">10</span> / <span class="num">0</span>
+<span class="kw">except</span> <span class="cl">ZeroDivisionError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"Error: {e}"</span>)
+<span class="kw">except</span> (<span class="cl">TypeError</span>, <span class="cl">ValueError</span>) <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"Type/Value error: {e}"</span>)
+<span class="kw">except</span> <span class="cl">Exception</span> <span class="kw">as</span> e:
+    <span class="fn">raise</span>              <span class="cm"># re-raise</span>
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"no error"</span>)  <span class="cm"># runs if no except</span>
+<span class="kw">finally</span>:
+    <span class="fn">print</span>(<span class="str">"always runs"</span>)`
+  },
+  {
+    title: "Custom Exceptions",
+    cat: "exceptions",
+    desc: "Define your own exception classes.",
+    code: `<span class="kw">class</span> <span class="cl">AppError</span>(<span class="cl">Exception</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, msg, code=<span class="num">0</span>):
+        <span class="fn">super</span>().__init__(msg)
+        <span class="kw">self</span>.code = code
+
+<span class="kw">class</span> <span class="cl">NotFoundError</span>(<span class="cl">AppError</span>): <span class="kw">pass</span>
+<span class="kw">class</span> <span class="cl">ValidationError</span>(<span class="cl">AppError</span>): <span class="kw">pass</span>
+
+<span class="kw">try</span>:
+    <span class="kw">raise</span> <span class="cl">NotFoundError</span>(<span class="str">"item missing"</span>, <span class="num">404</span>)
+<span class="kw">except</span> <span class="cl">AppError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(e.code, e)`
+  },
+  {
+    title: "Context Managers",
+    cat: "exceptions",
+    desc: "Custom with-statement using contextlib.",
+    code: `<span class="kw">from</span> contextlib <span class="kw">import</span> contextmanager
+
+<span class="kw">@contextmanager</span>
+<span class="kw">def</span> <span class="fn">managed_resource</span>(name):
+    <span class="fn">print</span>(<span class="str">f"Opening {name}"</span>)
+    <span class="kw">try</span>:
+        <span class="kw">yield</span> name          <span class="cm"># value passed to 'as'</span>
+    <span class="kw">finally</span>:
+        <span class="fn">print</span>(<span class="str">f"Closing {name}"</span>)
+
+<span class="kw">with</span> <span class="fn">managed_resource</span>(<span class="str">"db"</span>) <span class="kw">as</span> r:
+    <span class="fn">print</span>(<span class="str">f"Using {r}"</span>)`
+  },
+
+  // ── ASYNC ─────────────────────────────────────────────
+  {
+    title: "async / await basics",
+    cat: "async",
+    desc: "Define and run async functions.",
+    code: `<span class="kw">import</span> asyncio
+
+<span class="kw">async def</span> <span class="fn">fetch</span>(url: <span class="cl">str</span>) -> <span class="cl">str</span>:
+    <span class="kw">await</span> asyncio.sleep(<span class="num">1</span>)   <span class="cm"># simulate IO</span>
+    <span class="kw">return</span> <span class="str">f"data from {url}"</span>
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    result = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">"http://example.com"</span>)
+    <span class="fn">print</span>(result)
+
+<span class="cm"># run</span>
+asyncio.run(<span class="fn">main</span>())`
+  },
+  {
+    title: "asyncio.gather",
+    cat: "async",
+    desc: "Run multiple coroutines concurrently.",
+    code: `<span class="kw">import</span> asyncio
+
+<span class="kw">async def</span> <span class="fn">task</span>(n):
+    <span class="kw">await</span> asyncio.sleep(n)
+    <span class="kw">return</span> <span class="str">f"done {n}"</span>
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="cm"># run concurrently, wait for all</span>
+    results = <span class="kw">await</span> asyncio.gather(
+        <span class="fn">task</span>(<span class="num">1</span>),
+        <span class="fn">task</span>(<span class="num">2</span>),
+        <span class="fn">task</span>(<span class="num">3</span>),
+    )
+    <span class="fn">print</span>(results)
+    <span class="cm"># ['done 1', 'done 2', 'done 3']</span>
+
+asyncio.run(<span class="fn">main</span>())`
+  },
+  {
+    title: "asyncio Tasks",
+    cat: "async",
+    desc: "Create background tasks and cancel them.",
+    code: `<span class="kw">import</span> asyncio
+
+<span class="kw">async def</span> <span class="fn">worker</span>():
+    <span class="kw">while</span> <span class="bl">True</span>:
+        <span class="fn">print</span>(<span class="str">"working..."</span>)
+        <span class="kw">await</span> asyncio.sleep(<span class="num">1</span>)
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    task = asyncio.create_task(<span class="fn">worker</span>())
+    <span class="kw">await</span> asyncio.sleep(<span class="num">3</span>)
+    task.cancel()
+    <span class="kw">try</span>:
+        <span class="kw">await</span> task
+    <span class="kw">except</span> asyncio.CancelledError:
+        <span class="fn">print</span>(<span class="str">"task cancelled"</span>)
+
+asyncio.run(<span class="fn">main</span>())`
+  },
+  {
+    title: "Async Context Manager",
+    cat: "async",
+    desc: "async with and async for patterns.",
+    code: `<span class="kw">import</span> asyncio
+
+<span class="kw">class</span> <span class="cl">AsyncDB</span>:
+    <span class="kw">async def</span> <span class="fn">__aenter__</span>(<span class="kw">self</span>):
+        <span class="fn">print</span>(<span class="str">"connect"</span>)
+        <span class="kw">return</span> <span class="kw">self</span>
+
+    <span class="kw">async def</span> <span class="fn">__aexit__</span>(<span class="kw">self</span>, *args):
+        <span class="fn">print</span>(<span class="str">"disconnect"</span>)
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="kw">async with</span> <span class="cl">AsyncDB</span>() <span class="kw">as</span> db:
+        <span class="fn">print</span>(<span class="str">"using db"</span>)
+
+    <span class="cm"># async for (async generator)</span>
+    <span class="kw">async for</span> item <span class="kw">in</span> some_async_gen():
+        <span class="fn">print</span>(item)`
+  },
+
+  // ── STDLIB ────────────────────────────────────────────
+  {
+    title: "os & sys",
+    cat: "stdlib",
+    desc: "OS paths, env vars, and system info.",
+    code: `<span class="kw">import</span> os, sys
+
+<span class="cm"># env vars</span>
+os.environ.get(<span class="str">"HOME"</span>)
+os.environ[<span class="str">"MY_KEY"</span>] = <span class="str">"val"</span>
+
+<span class="cm"># paths</span>
+os.getcwd()
+os.listdir(<span class="str">"."</span>)
+os.path.join(<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>)
+os.path.exists(<span class="str">"file.txt"</span>)
+os.makedirs(<span class="str">"dir/sub"</span>, exist_ok=<span class="bl">True</span>)
+
+<span class="cm"># sys</span>
+sys.argv         <span class="cm"># CLI args list</span>
+sys.exit(<span class="num">0</span>)     <span class="cm"># exit with code</span>
+sys.platform     <span class="cm"># 'linux', 'win32'</span>
+sys.path         <span class="cm"># module search paths</span>`
+  },
+  {
+    title: "subprocess",
+    cat: "stdlib",
+    desc: "Run shell commands from Python.",
+    code: `<span class="kw">import</span> subprocess
+
+<span class="cm"># simple run</span>
+subprocess.run([<span class="str">"ls"</span>, <span class="str">"-la"</span>])
+
+<span class="cm"># capture output</span>
+result = subprocess.run(
+    [<span class="str">"git"</span>, <span class="str">"status"</span>],
+    capture_output=<span class="bl">True</span>,
+    text=<span class="bl">True</span>
+)
+<span class="fn">print</span>(result.stdout)
+<span class="fn">print</span>(result.returncode)  <span class="cm"># 0 = success</span>
+
+<span class="cm"># raise on error</span>
+subprocess.run([<span class="str">"cmd"</span>], check=<span class="bl">True</span>)`
+  },
+  {
+    title: "datetime",
+    cat: "stdlib",
+    desc: "Dates, times, formatting, and deltas.",
+    code: `<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta, date
+
+now = datetime.now()
+today = date.today()
+
+<span class="cm"># format</span>
+now.strftime(<span class="str">"%Y-%m-%d %H:%M:%S"</span>)
+
+<span class="cm"># parse string</span>
+datetime.strptime(<span class="str">"2025-01-15"</span>, <span class="str">"%Y-%m-%d"</span>)
+
+<span class="cm"># arithmetic</span>
+tomorrow = now + timedelta(days=<span class="num">1</span>)
+diff = datetime(<span class="num">2026</span>, <span class="num">1</span>, <span class="num">1</span>) - now
+diff.days        <span class="cm"># integer days</span>
+
+<span class="cm"># from timestamp</span>
+datetime.fromtimestamp(<span class="num">1700000000</span>)`
+  },
+  {
+    title: "re — regex",
+    cat: "stdlib",
+    desc: "Pattern matching and substitution.",
+    code: `<span class="kw">import</span> re
+
+text = <span class="str">"email: user@example.com"</span>
+
+<span class="cm"># search (first match)</span>
+m = re.search(<span class="str">r"[\w.]+@[\w.]+"</span>, text)
+m.group()   <span class="cm"># 'user@example.com'</span>
+
+<span class="cm"># findall</span>
+re.findall(<span class="str">r"\d+"</span>, <span class="str">"a1 b22 c333"</span>)
+<span class="cm"># ['1', '22', '333']</span>
+
+<span class="cm"># sub (replace)</span>
+re.sub(<span class="str">r"\s+"</span>, <span class="str">"_"</span>, <span class="str">"hello world"</span>)
+<span class="cm"># 'hello_world'</span>
+
+<span class="cm"># groups</span>
+m = re.match(<span class="str">r"(\w+):(\d+)"</span>, <span class="str">"port:8080"</span>)
+m.group(<span class="num">1</span>), m.group(<span class="num">2</span>)  <span class="cm"># 'port', '8080'</span>`
+  },
+  {
+    title: "collections",
+    cat: "stdlib",
+    desc: "Counter, deque, defaultdict, namedtuple.",
+    code: `<span class="kw">from</span> collections <span class="kw">import</span> Counter, deque, defaultdict, namedtuple
+
+<span class="cm"># Counter</span>
+c = Counter(<span class="str">"abracadabra"</span>)
+c.most_common(<span class="num">3</span>)   <span class="cm"># [('a',5),('b',2),('r',2)]</span>
+
+<span class="cm"># deque (fast append/pop both ends)</span>
+dq = deque([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>], maxlen=<span class="num">5</span>)
+dq.appendleft(<span class="num">0</span>)
+dq.popleft()
+
+<span class="cm"># defaultdict</span>
+dd = defaultdict(<span class="fn">list</span>)
+dd[<span class="str">"key"</span>].append(<span class="num">1</span>)  <span class="cm"># no KeyError</span>
+
+<span class="cm"># namedtuple</span>
+Point = namedtuple(<span class="str">"Point"</span>, [<span class="str">"x"</span>, <span class="str">"y"</span>])
+p = Point(<span class="num">1</span>, <span class="num">2</span>)
+p.x, p.y`
+  },
+  {
+    title: "itertools",
+    cat: "stdlib",
+    desc: "Powerful combinatoric and infinite iterators.",
+    code: `<span class="kw">from</span> itertools <span class="kw">import</span> (
+    product, permutations, combinations,
+    islice, groupby, cycle, chain
+)
+
+<span class="fn">list</span>(product([<span class="num">0</span>,<span class="num">1</span>], repeat=<span class="num">2</span>))
+<span class="cm"># [(0,0),(0,1),(1,0),(1,1)]</span>
+
+<span class="fn">list</span>(combinations(<span class="str">"ABC"</span>, <span class="num">2</span>))
+<span class="cm"># [('A','B'),('A','C'),('B','C')]</span>
+
+<span class="fn">list</span>(permutations(<span class="str">"AB"</span>, <span class="num">2</span>))
+<span class="cm"># [('A','B'),('B','A')]</span>
+
+<span class="cm"># first N of infinite iter</span>
+<span class="fn">list</span>(islice(cycle([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]), <span class="num">7</span>))
+<span class="cm"># [1,2,3,1,2,3,1]</span>
+
+<span class="cm"># groupby (input must be sorted)</span>
+<span class="kw">for</span> k, g <span class="kw">in</span> groupby(<span class="str">"AAABBC"</span>):
+    <span class="fn">print</span>(k, <span class="fn">list</span>(g))`
+  },
+  {
+    title: "logging",
+    cat: "stdlib",
+    desc: "Proper logging instead of print statements.",
+    code: `<span class="kw">import</span> logging
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format=<span class="str">"%(asctime)s %(levelname)s %(message)s"</span>
+)
+
+logger = logging.getLogger(<span class="fn">__name__</span>)
+
+logger.debug(<span class="str">"debug info"</span>)
+logger.info(<span class="str">"started"</span>)
+logger.warning(<span class="str">"low memory"</span>)
+logger.error(<span class="str">"file not found"</span>)
+logger.exception(<span class="str">"unexpected"</span>)  <span class="cm"># + traceback</span>
+
+<span class="cm"># log to file</span>
+logging.basicConfig(filename=<span class="str">"app.log"</span>)`
+  },
+  {
+    title: "argparse",
+    cat: "stdlib",
+    desc: "Build CLI tools with typed arguments.",
+    code: `<span class="kw">import</span> argparse
+
+parser = argparse.ArgumentParser(description=<span class="str">"My tool"</span>)
+
+<span class="cm"># positional</span>
+parser.add_argument(<span class="str">"input"</span>, help=<span class="str">"input file"</span>)
+
+<span class="cm"># optional flags</span>
+parser.add_argument(<span class="str">"--output"</span>, <span class="str">"-o"</span>, default=<span class="str">"out.txt"</span>)
+parser.add_argument(<span class="str">"--verbose"</span>, action=<span class="str">"store_true"</span>)
+parser.add_argument(<span class="str">"--count"</span>, type=<span class="cl">int</span>, default=<span class="num">1</span>)
+
+args = parser.parse_args()
+<span class="fn">print</span>(args.input, args.verbose)`
+  },
+  {
+    title: "dotenv & env vars",
+    cat: "stdlib",
+    desc: "Load .env files for config and secrets.",
+    code: `<span class="cm"># pip install python-dotenv</span>
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+<span class="kw">import</span> os
+
+load_dotenv()  <span class="cm"># reads .env file</span>
+
+API_KEY = os.environ[<span class="str">"API_KEY"</span>]
+DEBUG   = os.getenv(<span class="str">"DEBUG"</span>, <span class="str">"false"</span>) == <span class="str">"true"</span>
+
+<span class="cm"># .env file looks like:</span>
+<span class="cm"># API_KEY=abc123</span>
+<span class="cm"># DEBUG=true</span>
+
+<span class="cm"># never commit .env — add to .gitignore</span>`
+  },
+
+  // ── TYPING ────────────────────────────────────────────
+  {
+    title: "Type Hints",
+    cat: "typing",
+    desc: "Annotate variables and functions with types.",
+    code: `<span class="kw">from</span> typing <span class="kw">import</span> Optional, Union, Any
+
+<span class="cm"># basic annotations</span>
+name: <span class="cl">str</span> = <span class="str">"Munim"</span>
+scores: <span class="cl">list</span>[<span class="cl">int</span>] = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+lookup: <span class="cl">dict</span>[<span class="cl">str</span>, <span class="cl">int</span>] = {}
+
+<span class="cm"># Optional = value or None</span>
+<span class="kw">def</span> <span class="fn">find</span>(key: <span class="cl">str</span>) -> Optional[<span class="cl">str</span>]: ...
+
+<span class="cm"># Union = one of several types</span>
+<span class="kw">def</span> <span class="fn">process</span>(x: Union[<span class="cl">int</span>, <span class="cl">str</span>]) -> <span class="cl">str</span>: ...
+
+<span class="cm"># Python 3.10+ shorthand</span>
+<span class="kw">def</span> <span class="fn">f</span>(x: <span class="cl">int</span> | <span class="cl">None</span>) -> <span class="cl">str</span> | <span class="cl">int</span>: ...`
+  },
+  {
+    title: "TypedDict & Protocol",
+    cat: "typing",
+    desc: "Type-safe dicts and structural subtyping.",
+    code: `<span class="kw">from</span> typing <span class="kw">import</span> TypedDict, Protocol
+
+<span class="cm"># TypedDict — typed dict shape</span>
+<span class="kw">class</span> <span class="cl">UserDict</span>(TypedDict):
+    name: <span class="cl">str</span>
+    age: <span class="cl">int</span>
+    email: <span class="cl">str</span>
+
+user: <span class="cl">UserDict</span> = {<span class="str">"name"</span>: <span class="str">"x"</span>, <span class="str">"age"</span>: <span class="num">1</span>, <span class="str">"email"</span>: <span class="str">"x@y"</span>}
+
+<span class="cm"># Protocol — duck typing interface</span>
+<span class="kw">class</span> <span class="cl">Drawable</span>(Protocol):
+    <span class="kw">def</span> <span class="fn">draw</span>(<span class="kw">self</span>) -> <span class="bl">None</span>: ...
+
+<span class="kw">def</span> <span class="fn">render</span>(obj: <span class="cl">Drawable</span>) -> <span class="bl">None</span>:
+    obj.draw()  <span class="cm"># works for any obj with draw()</span>`
+  },
+  {
+    title: "Generics & TypeVar",
+    cat: "typing",
+    desc: "Write type-safe generic functions.",
+    code: `<span class="kw">from</span> typing <span class="kw">import</span> TypeVar, Generic
+
+T = TypeVar(<span class="str">"T"</span>)
+
+<span class="cm"># generic function</span>
+<span class="kw">def</span> <span class="fn">first</span>(items: <span class="cl">list</span>[T]) -> T:
+    <span class="kw">return</span> items[<span class="num">0</span>]
+
+first([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])      <span class="cm"># inferred: int</span>
+first([<span class="str">"a"</span>, <span class="str">"b"</span>])    <span class="cm"># inferred: str</span>
+
+<span class="cm"># generic class</span>
+<span class="kw">class</span> <span class="cl">Box</span>(<span class="cl">Generic</span>[T]):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, val: T): <span class="kw">self</span>.val = val
+    <span class="kw">def</span> <span class="fn">get</span>(<span class="kw">self</span>) -> T: <span class="kw">return</span> <span class="kw">self</span>.val
+
+b = <span class="cl">Box</span>(<span class="num">42</span>)
+b.get()  <span class="cm"># int</span>`
+  },
+
+  // ── CLASSES (extra) ───────────────────────────────────
+  {
+    title: "Dunder Methods",
+    cat: "classes",
+    desc: "__str__, __repr__, __len__, __eq__, __hash__.",
+    code: `<span class="kw">class</span> <span class="cl">Vector</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, x, y):
+        <span class="kw">self</span>.x, <span class="kw">self</span>.y = x, y
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> <span class="str">f"Vector({self.x}, {self.y})"</span>
+
+    <span class="kw">def</span> <span class="fn">__len__</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="num">2</span>
+
+    <span class="kw">def</span> <span class="fn">__eq__</span>(<span class="kw">self</span>, other):
+        <span class="kw">return</span> <span class="kw">self</span>.x == other.x <span class="kw">and</span> <span class="kw">self</span>.y == other.y
+
+    <span class="kw">def</span> <span class="fn">__add__</span>(<span class="kw">self</span>, other):
+        <span class="kw">return</span> <span class="cl">Vector</span>(<span class="kw">self</span>.x+other.x, <span class="kw">self</span>.y+other.y)
+
+    <span class="kw">def</span> <span class="fn">__hash__</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> <span class="fn">hash</span>((<span class="kw">self</span>.x, <span class="kw">self</span>.y))`
+  },
+  {
+    title: "staticmethod & classmethod",
+    cat: "classes",
+    desc: "Alternative constructors and utility methods.",
+    code: `<span class="kw">class</span> <span class="cl">Temperature</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, celsius):
+        <span class="kw">self</span>.celsius = celsius
+
+    <span class="kw">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">from_fahrenheit</span>(cls, f):
+        <span class="kw">return</span> cls((f - <span class="num">32</span>) * <span class="num">5</span> / <span class="num">9</span>)
+
+    <span class="kw">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">from_kelvin</span>(cls, k):
+        <span class="kw">return</span> cls(k - <span class="num">273.15</span>)
+
+    <span class="kw">@staticmethod</span>
+    <span class="kw">def</span> <span class="fn">is_valid</span>(c): <span class="kw">return</span> c >= -<span class="num">273.15</span>
+
+t = Temperature.from_fahrenheit(<span class="num">98.6</span>)
+Temperature.is_valid(<span class="num">100</span>)   <span class="cm"># True</span>`
+  },
+
+  // ── DEBUGGING ─────────────────────────────────────────
+  {
+    title: "pdb / breakpoint",
+    cat: "debugging",
+    desc: "Drop into interactive debugger mid-execution.",
+    code: `<span class="cm"># modern way (Python 3.7+)</span>
+<span class="fn">breakpoint</span>()   <span class="cm"># drops into pdb here</span>
+
+<span class="cm"># old way</span>
+<span class="kw">import</span> pdb; pdb.set_trace()
+
+<span class="cm"># pdb commands:</span>
+<span class="cm"># n  → next line</span>
+<span class="cm"># s  → step into</span>
+<span class="cm"># c  → continue</span>
+<span class="cm"># q  → quit</span>
+<span class="cm"># p x → print x</span>
+<span class="cm"># l  → list source</span>
+<span class="cm"># bt → backtrace</span>
+<span class="cm"># h  → help</span>`
+  },
+  {
+    title: "timeit & profiling",
+    cat: "debugging",
+    desc: "Measure execution time and find bottlenecks.",
+    code: `<span class="kw">import</span> timeit, cProfile
+
+<span class="cm"># quick timing</span>
+t = timeit.timeit(
+    <span class="str">"[x**2 for x in range(1000)]"</span>,
+    number=<span class="num">1000</span>
+)
+<span class="fn">print</span>(<span class="str">f"{t:.3f}s"</span>)
+
+<span class="cm"># profile a function</span>
+cProfile.run(<span class="str">"my_function()"</span>)
+
+<span class="cm"># inline timer decorator</span>
+<span class="kw">import</span> time
+start = time.perf_counter()
+<span class="cm"># ... code ...</span>
+elapsed = time.perf_counter() - start
+<span class="fn">print</span>(<span class="str">f"{elapsed*1000:.2f}ms"</span>)`
+  },
+  {
+    title: "assert & __debug__",
+    cat: "debugging",
+    desc: "Assertions for catching logic errors early.",
+    code: `<span class="cm"># assert raises AssertionError if False</span>
+<span class="kw">assert</span> x > <span class="num">0</span>, <span class="str">f"x must be positive, got {x}"</span>
+<span class="kw">assert</span> <span class="fn">isinstance</span>(data, <span class="cl">list</span>), <span class="str">"expected list"</span>
+
+<span class="cm"># assert with expression</span>
+<span class="kw">def</span> <span class="fn">divide</span>(a, b):
+    <span class="kw">assert</span> b != <span class="num">0</span>, <span class="str">"cannot divide by zero"</span>
+    <span class="kw">return</span> a / b
+
+<span class="cm"># NOTE: asserts are stripped with python -O</span>
+<span class="cm"># use for dev checks, not production validation</span>
+
+<span class="cm"># quick inspect trick</span>
+x = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+<span class="fn">print</span>(<span class="str">f"{x = }"</span>)   <span class="cm"># x = [1, 2, 3]</span>`
+  },
+
+  // ── NUMPY ─────────────────────────────────────────────
+  {
+    title: "NumPy Arrays",
+    cat: "numpy",
+    desc: "Create and inspect numpy arrays.",
+    code: `<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># create</span>
+a = np.array([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])
+b = np.zeros((<span class="num">3</span>, <span class="num">4</span>))       <span class="cm"># 3x4 zeros</span>
+c = np.ones((<span class="num">2</span>, <span class="num">3</span>))        <span class="cm"># 2x3 ones</span>
+d = np.arange(<span class="num">0</span>, <span class="num">10</span>, <span class="num">2</span>)   <span class="cm"># [0,2,4,6,8]</span>
+e = np.linspace(<span class="num">0</span>, <span class="num">1</span>, <span class="num">5</span>)  <span class="cm"># 5 evenly spaced</span>
+f = np.random.randn(<span class="num">3</span>, <span class="num">3</span>) <span class="cm"># random normal</span>
+
+<span class="cm"># inspect</span>
+a.shape    <span class="cm"># (3,)</span>
+a.dtype    <span class="cm"># dtype('int64')</span>
+a.ndim     <span class="cm"># 1</span>
+a.size     <span class="cm"># 3</span>`
+  },
+  {
+    title: "NumPy Indexing & Slicing",
+    cat: "numpy",
+    desc: "Select elements, rows, columns, and masked data.",
+    code: `<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+a = np.array([[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>],[<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>],[<span class="num">7</span>,<span class="num">8</span>,<span class="num">9</span>]])
+
+a[<span class="num">0</span>, <span class="num">1</span>]      <span class="cm"># 2  (row 0, col 1)</span>
+a[<span class="num">1</span>, :]      <span class="cm"># [4,5,6]  (row 1)</span>
+a[:, <span class="num">2</span>]      <span class="cm"># [3,6,9]  (col 2)</span>
+a[<span class="num">0</span>:<span class="num">2</span>, <span class="num">1</span>:<span class="num">3</span>]  <span class="cm"># [[2,3],[5,6]]</span>
+
+<span class="cm"># boolean mask</span>
+a[a > <span class="num">5</span>]     <span class="cm"># [6,7,8,9]</span>
+
+<span class="cm"># fancy indexing</span>
+a[[<span class="num">0</span>, <span class="num">2</span>], :]  <span class="cm"># rows 0 and 2</span>
+
+<span class="cm"># set values</span>
+a[a < <span class="num">3</span>] = <span class="num">0</span>`
+  },
+  {
+    title: "NumPy Operations",
+    cat: "numpy",
+    desc: "Math, aggregation, reshape, and broadcasting.",
+    code: `<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+a = np.array([[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,<span class="num">4</span>]])
+
+<span class="cm"># element-wise</span>
+a * <span class="num">2</span>        <span class="cm"># [[2,4],[6,8]]</span>
+a ** <span class="num">2</span>       <span class="cm"># [[1,4],[9,16]]</span>
+np.sqrt(a)
+
+<span class="cm"># aggregation</span>
+a.sum()       <span class="cm"># 10</span>
+a.sum(axis=<span class="num">0</span>) <span class="cm"># [4,6] (col sums)</span>
+a.mean(), a.std(), a.max(), a.min()
+
+<span class="cm"># reshape</span>
+a.reshape(<span class="num">1</span>, <span class="num">4</span>)      <span class="cm"># [[1,2,3,4]]</span>
+a.flatten()           <span class="cm"># [1,2,3,4]</span>
+a.T                   <span class="cm"># transpose</span>
+
+<span class="cm"># dot product</span>
+np.dot(a, a)   <span class="cm"># matrix multiply</span>
+a @ a          <span class="cm"># same</span>`
+  },
+  {
+    title: "NumPy Stacking & Concat",
+    cat: "numpy",
+    desc: "Combine arrays along axes.",
+    code: `<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+a = np.array([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])
+b = np.array([<span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>])
+
+np.concatenate([a, b])    <span class="cm"># [1,2,3,4,5,6]</span>
+np.vstack([a, b])         <span class="cm"># [[1,2,3],[4,5,6]]</span>
+np.hstack([a, b])         <span class="cm"># [1,2,3,4,5,6]</span>
+np.stack([a, b], axis=<span class="num">0</span>) <span class="cm"># [[1,2,3],[4,5,6]]</span>
+
+<span class="cm"># split</span>
+np.split(a, <span class="num">3</span>)  <span class="cm"># [array([1]),array([2]),array([3])]</span>
+
+<span class="cm"># expand dims</span>
+a[np.newaxis, :]  <span class="cm"># shape (1,3)</span>
+a[:, np.newaxis]  <span class="cm"># shape (3,1)</span>`
+  },
+
+  // ── PANDAS ────────────────────────────────────────────
+  {
+    title: "DataFrame Basics",
+    cat: "pandas",
+    desc: "Create and inspect DataFrames.",
+    code: `<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># create</span>
+df = pd.DataFrame({
+    <span class="str">"name"</span>: [<span class="str">"Alice"</span>, <span class="str">"Bob"</span>, <span class="str">"Carol"</span>],
+    <span class="str">"age"</span>:  [<span class="num">25</span>, <span class="num">30</span>, <span class="num">22</span>],
+    <span class="str">"score"</span>:[<span class="num">88.5</span>, <span class="num">92.0</span>, <span class="num">79.3</span>],
+})
+
+<span class="cm"># inspect</span>
+df.head(<span class="num">3</span>)       <span class="cm"># first 3 rows</span>
+df.info()         <span class="cm"># dtypes + nulls</span>
+df.describe()     <span class="cm"># stats summary</span>
+df.shape          <span class="cm"># (3, 3)</span>
+df.columns        <span class="cm"># Index(['name','age','score'])</span>
+df.dtypes`
+  },
+  {
+    title: "DataFrame Selection",
+    cat: "pandas",
+    desc: "Select rows, columns, and cells.",
+    code: `<span class="cm"># single column → Series</span>
+df[<span class="str">"age"</span>]
+
+<span class="cm"># multiple columns → DataFrame</span>
+df[[<span class="str">"name"</span>, <span class="str">"score"</span>]]
+
+<span class="cm"># by label (inclusive)</span>
+df.loc[<span class="num">0</span>:<span class="num">1</span>, <span class="str">"name"</span>:<span class="str">"age"</span>]
+
+<span class="cm"># by position (exclusive end)</span>
+df.iloc[<span class="num">0</span>:<span class="num">2</span>, <span class="num">0</span>:<span class="num">2</span>]
+
+<span class="cm"># boolean filter</span>
+df[df[<span class="str">"age"</span>] > <span class="num">24</span>]
+df[(df[<span class="str">"age"</span>] > <span class="num">24</span>) & (df[<span class="str">"score"</span>] > <span class="num">85</span>)]
+
+<span class="cm"># query string</span>
+df.query(<span class="str">"age > 24 and score > 85"</span>)`
+  },
+  {
+    title: "DataFrame Operations",
+    cat: "pandas",
+    desc: "Add columns, groupby, sort, merge.",
+    code: `<span class="cm"># add column</span>
+df[<span class="str">"grade"</span>] = df[<span class="str">"score"</span>].apply(
+    <span class="kw">lambda</span> x: <span class="str">"A"</span> <span class="kw">if</span> x >= <span class="num">90</span> <span class="kw">else</span> <span class="str">"B"</span>
+)
+
+<span class="cm"># groupby</span>
+df.groupby(<span class="str">"grade"</span>)[<span class="str">"score"</span>].mean()
+
+<span class="cm"># sort</span>
+df.sort_values(<span class="str">"score"</span>, ascending=<span class="bl">False</span>)
+
+<span class="cm"># merge (like SQL JOIN)</span>
+pd.merge(df1, df2, on=<span class="str">"id"</span>, how=<span class="str">"left"</span>)
+
+<span class="cm"># drop nulls / fill</span>
+df.dropna()
+df.fillna(<span class="num">0</span>)
+
+<span class="cm"># rename columns</span>
+df.rename(columns={<span class="str">"score"</span>: <span class="str">"points"</span>})`
+  },
+  {
+    title: "Pandas I/O",
+    cat: "pandas",
+    desc: "Read and write CSV, JSON, Excel.",
+    code: `<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># read</span>
+df = pd.read_csv(<span class="str">"data.csv"</span>)
+df = pd.read_csv(<span class="str">"data.csv"</span>, index_col=<span class="num">0</span>)
+df = pd.read_json(<span class="str">"data.json"</span>)
+df = pd.read_excel(<span class="str">"data.xlsx"</span>, sheet_name=<span class="str">"Sheet1"</span>)
+
+<span class="cm"># write</span>
+df.to_csv(<span class="str">"out.csv"</span>, index=<span class="bl">False</span>)
+df.to_json(<span class="str">"out.json"</span>, orient=<span class="str">"records"</span>)
+df.to_excel(<span class="str">"out.xlsx"</span>, index=<span class="bl">False</span>)
+
+<span class="cm"># from list of dicts</span>
+pd.DataFrame([{<span class="str">"x"</span>:<span class="num">1</span>},{<span class="str">"x"</span>:<span class="num">2</span>}])`
+  },
+
+  // ── FUNCTOOLS ─────────────────────────────────────────
+  {
+    title: "functools.lru_cache",
+    cat: "functools",
+    desc: "Memoize expensive function calls automatically.",
+    code: `<span class="kw">from</span> functools <span class="kw">import</span> lru_cache, cache
+
+<span class="cm"># cache up to 128 results</span>
+<span class="kw">@lru_cache</span>(maxsize=<span class="num">128</span>)
+<span class="kw">def</span> <span class="fn">fib</span>(n: <span class="cl">int</span>) -> <span class="cl">int</span>:
+    <span class="kw">if</span> n < <span class="num">2</span>: <span class="kw">return</span> n
+    <span class="kw">return</span> <span class="fn">fib</span>(n-<span class="num">1</span>) + <span class="fn">fib</span>(n-<span class="num">2</span>)
+
+<span class="cm"># unlimited cache (Python 3.9+)</span>
+<span class="kw">@cache</span>
+<span class="kw">def</span> <span class="fn">expensive</span>(x): ...
+
+<span class="cm"># inspect / clear cache</span>
+<span class="fn">fib</span>.cache_info()
+<span class="fn">fib</span>.cache_clear()`
+  },
+  {
+    title: "functools.partial",
+    cat: "functools",
+    desc: "Pre-fill function arguments to create new callables.",
+    code: `<span class="kw">from</span> functools <span class="kw">import</span> partial
+
+<span class="kw">def</span> <span class="fn">power</span>(base, exp):
+    <span class="kw">return</span> base ** exp
+
+square = partial(power, exp=<span class="num">2</span>)
+cube   = partial(power, exp=<span class="num">3</span>)
+
+square(<span class="num">4</span>)   <span class="cm"># 16</span>
+cube(<span class="num">3</span>)     <span class="cm"># 27</span>
+
+<span class="cm"># useful with map/filter</span>
+double = partial(<span class="fn">int</span>.__mul__, <span class="num">2</span>)
+
+<span class="cm"># also works with keyword args</span>
+log_err = partial(<span class="fn">print</span>, end=<span class="str">" [ERROR]\n"</span>)
+<span class="fn">log_err</span>(<span class="str">"disk full"</span>)`
+  },
+  {
+    title: "operator module",
+    cat: "functools",
+    desc: "itemgetter, attrgetter for fast key access.",
+    code: `<span class="kw">from</span> operator <span class="kw">import</span> itemgetter, attrgetter, methodcaller
+
+people = [
+    {<span class="str">"name"</span>: <span class="str">"Bob"</span>,   <span class="str">"age"</span>: <span class="num">30</span>},
+    {<span class="str">"name"</span>: <span class="str">"Alice"</span>, <span class="str">"age"</span>: <span class="num">25</span>},
+]
+
+<span class="cm"># sort by key — faster than lambda</span>
+<span class="fn">sorted</span>(people, key=itemgetter(<span class="str">"age"</span>))
+
+<span class="cm"># attrgetter for objects</span>
+<span class="fn">sorted</span>(objects, key=attrgetter(<span class="str">"name"</span>))
+
+<span class="cm"># multi-key sort</span>
+<span class="fn">sorted</span>(people, key=itemgetter(<span class="str">"age"</span>, <span class="str">"name"</span>))
+
+<span class="cm"># call method on each item</span>
+<span class="fn">list</span>(<span class="fn">map</span>(methodcaller(<span class="str">"upper"</span>), [<span class="str">"a"</span>, <span class="str">"b"</span>]))`
+  },
+
+  // ── CONCURRENCY ───────────────────────────────────────
+  {
+    title: "threading",
+    cat: "concurrency",
+    desc: "Run IO-bound tasks in background threads.",
+    code: `<span class="kw">import</span> threading
+
+<span class="kw">def</span> <span class="fn">worker</span>(n):
+    <span class="fn">print</span>(<span class="str">f"thread {n} done"</span>)
+
+<span class="cm"># create and start</span>
+t = threading.Thread(target=worker, args=(<span class="num">1</span>,))
+t.start()
+t.join()   <span class="cm"># wait for completion</span>
+
+<span class="cm"># multiple threads</span>
+threads = [threading.Thread(target=worker, args=(i,))
+           <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>)]
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.start()
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.join()
+
+<span class="cm"># thread-safe lock</span>
+lock = threading.Lock()
+<span class="kw">with</span> lock:
+    shared_resource += <span class="num">1</span>`
+  },
+  {
+    title: "multiprocessing",
+    cat: "concurrency",
+    desc: "True parallelism for CPU-bound tasks.",
+    code: `<span class="kw">from</span> multiprocessing <span class="kw">import</span> Pool, Process
+<span class="kw">import</span> multiprocessing <span class="kw">as</span> mp
+
+<span class="kw">def</span> <span class="fn">square</span>(x): <span class="kw">return</span> x ** <span class="num">2</span>
+
+<span class="cm"># Pool — map work across processes</span>
+<span class="kw">with</span> Pool(processes=<span class="num">4</span>) <span class="kw">as</span> pool:
+    results = pool.map(square, <span class="fn">range</span>(<span class="num">10</span>))
+    <span class="cm"># [0, 1, 4, 9, 16, ...]</span>
+
+<span class="cm"># cpu count</span>
+mp.cpu_count()
+
+<span class="cm"># single process</span>
+p = Process(target=square, args=(<span class="num">5</span>,))
+p.start()
+p.join()`
+  },
+  {
+    title: "concurrent.futures",
+    cat: "concurrency",
+    desc: "High-level thread and process pool executor.",
+    code: `<span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor, ProcessPoolExecutor, as_completed
+
+<span class="kw">def</span> <span class="fn">fetch</span>(url): <span class="kw">return</span> <span class="str">f"result:{url}"</span>
+
+urls = [<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>]
+
+<span class="cm"># threads (IO-bound)</span>
+<span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">5</span>) <span class="kw">as</span> ex:
+    results = <span class="fn">list</span>(ex.map(fetch, urls))
+
+<span class="cm"># as results complete</span>
+<span class="kw">with</span> ThreadPoolExecutor() <span class="kw">as</span> ex:
+    futures = {ex.submit(fetch, u): u <span class="kw">for</span> u <span class="kw">in</span> urls}
+    <span class="kw">for</span> f <span class="kw">in</span> as_completed(futures):
+        <span class="fn">print</span>(f.result())`
+  },
+
+  // ── NETWORKING ────────────────────────────────────────
+  {
+    title: "requests",
+    cat: "networking",
+    desc: "HTTP GET, POST, headers, auth, session.",
+    code: `<span class="kw">import</span> requests
+
+<span class="cm"># GET</span>
+r = requests.get(<span class="str">"https://api.example.com/data"</span>,
+    params={<span class="str">"q"</span>: <span class="str">"python"</span>},
+    headers={<span class="str">"Authorization"</span>: <span class="str">"Bearer token"</span>},
+    timeout=<span class="num">10</span>
+)
+r.status_code    <span class="cm"># 200</span>
+r.json()         <span class="cm"># parsed JSON</span>
+r.text           <span class="cm"># raw string</span>
+
+<span class="cm"># POST JSON</span>
+r = requests.post(<span class="str">"https://api.example.com/post"</span>,
+    json={<span class="str">"key"</span>: <span class="str">"value"</span>}
+)
+r.raise_for_status()  <span class="cm"># raise on 4xx/5xx</span>`
+  },
+  {
+    title: "requests Session",
+    cat: "networking",
+    desc: "Reuse connections and persist headers/cookies.",
+    code: `<span class="kw">import</span> requests
+
+session = requests.Session()
+session.headers.update({
+    <span class="str">"Authorization"</span>: <span class="str">"Bearer my-token"</span>,
+    <span class="str">"Accept"</span>: <span class="str">"application/json"</span>,
+})
+
+<span class="cm"># all requests reuse the session</span>
+r1 = session.get(<span class="str">"https://api.example.com/users"</span>)
+r2 = session.get(<span class="str">"https://api.example.com/posts"</span>)
+
+<span class="cm"># retry on failure</span>
+<span class="kw">from</span> requests.adapters <span class="kw">import</span> HTTPAdapter
+session.mount(<span class="str">"https://"</span>, HTTPAdapter(max_retries=<span class="num">3</span>))`
+  },
+  {
+    title: "urllib & URL parsing",
+    cat: "networking",
+    desc: "Built-in URL encoding and parsing.",
+    code: `<span class="kw">from</span> urllib.parse <span class="kw">import</span> (
+    urlparse, urlencode, urljoin,
+    quote, unquote, parse_qs
+)
+
+urlparse(<span class="str">"https://example.com/path?q=1"</span>)
+<span class="cm"># ParseResult(scheme='https', netloc='example.com'...)</span>
+
+urlencode({<span class="str">"q"</span>: <span class="str">"hello world"</span>, <span class="str">"page"</span>: <span class="num">2</span>})
+<span class="cm"># 'q=hello+world&page=2'</span>
+
+quote(<span class="str">"hello/world"</span>)   <span class="cm"># 'hello%2Fworld'</span>
+unquote(<span class="str">"hello%2Fworld"</span>) <span class="cm"># 'hello/world'</span>
+
+urljoin(<span class="str">"https://example.com/a/"</span>, <span class="str">"b"</span>)
+<span class="cm"># 'https://example.com/a/b'</span>`
+  },
+
+  // ── TESTING ───────────────────────────────────────────
+  {
+    title: "unittest basics",
+    cat: "testing",
+    desc: "TestCase, assertions, setUp and tearDown.",
+    code: `<span class="kw">import</span> unittest
+
+<span class="kw">class</span> <span class="cl">TestMath</span>(unittest.TestCase):
+
+    <span class="kw">def</span> <span class="fn">setUp</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>.nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+
+    <span class="kw">def</span> <span class="fn">test_sum</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>.assertEqual(<span class="fn">sum</span>(<span class="kw">self</span>.nums), <span class="num">6</span>)
+
+    <span class="kw">def</span> <span class="fn">test_raises</span>(<span class="kw">self</span>):
+        <span class="kw">with</span> <span class="kw">self</span>.assertRaises(<span class="cl">ZeroDivisionError</span>):
+            <span class="num">1</span> / <span class="num">0</span>
+
+    <span class="kw">def</span> <span class="fn">test_type</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>.assertIsInstance(<span class="kw">self</span>.nums, <span class="cl">list</span>)
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    unittest.main()`
+  },
+  {
+    title: "pytest basics",
+    cat: "testing",
+    desc: "Simple test functions, fixtures, parametrize.",
+    code: `<span class="cm"># test_math.py</span>
+<span class="kw">import</span> pytest
+
+<span class="kw">def</span> <span class="fn">test_sum</span>():
+    <span class="kw">assert</span> <span class="fn">sum</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]) == <span class="num">6</span>
+
+<span class="kw">def</span> <span class="fn">test_raises</span>():
+    <span class="kw">with</span> pytest.raises(<span class="cl">ZeroDivisionError</span>):
+        <span class="num">1</span> / <span class="num">0</span>
+
+<span class="kw">@pytest.mark.parametrize</span>(<span class="str">"x,expected"</span>, [
+    (<span class="num">2</span>, <span class="num">4</span>), (<span class="num">3</span>, <span class="num">9</span>), (<span class="num">4</span>, <span class="num">16</span>)
+])
+<span class="kw">def</span> <span class="fn">test_square</span>(x, expected):
+    <span class="kw">assert</span> x**<span class="num">2</span> == expected
+
+<span class="cm"># run: pytest -v</span>`
+  },
+  {
+    title: "pytest fixtures & mocks",
+    cat: "testing",
+    desc: "Reusable fixtures and patching with monkeypatch.",
+    code: `<span class="kw">import</span> pytest
+<span class="kw">from</span> unittest.mock <span class="kw">import</span> patch, MagicMock
+
+<span class="kw">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">sample_db</span>():
+    db = {<span class="str">"users"</span>: [<span class="str">"Alice"</span>, <span class="str">"Bob"</span>]}
+    <span class="kw">yield</span> db
+    <span class="cm"># teardown after test</span>
+
+<span class="kw">def</span> <span class="fn">test_users</span>(sample_db):
+    <span class="kw">assert</span> <span class="str">"Alice"</span> <span class="kw">in</span> sample_db[<span class="str">"users"</span>]
+
+<span class="cm"># mock external call</span>
+<span class="kw">def</span> <span class="fn">test_api</span>(monkeypatch):
+    monkeypatch.setenv(<span class="str">"API_KEY"</span>, <span class="str">"test-key"</span>)
+    <span class="kw">with</span> patch(<span class="str">"requests.get"</span>) <span class="kw">as</span> mock:
+        mock.return_value.json.return_value = {<span class="str">"ok"</span>: <span class="bl">True</span>}
+        <span class="cm"># ... test code ...</span>`
+  },
+
+  // ── PYTORCH ───────────────────────────────────────────
+  {
+    title: "PyTorch Tensors",
+    cat: "torch",
+    desc: "Create and manipulate tensors.",
+    code: `<span class="kw">import</span> torch
+
+<span class="cm"># create</span>
+t = torch.tensor([<span class="num">1.0</span>, <span class="num">2.0</span>, <span class="num">3.0</span>])
+z = torch.zeros(<span class="num">3</span>, <span class="num">4</span>)
+r = torch.randn(<span class="num">2</span>, <span class="num">3</span>)
+e = torch.eye(<span class="num">3</span>)
+
+<span class="cm"># from numpy</span>
+t = torch.from_numpy(arr)
+arr = t.numpy()
+
+<span class="cm"># device</span>
+device = <span class="str">"cuda"</span> <span class="kw">if</span> torch.cuda.is_available() <span class="kw">else</span> <span class="str">"cpu"</span>
+t = t.to(device)
+
+<span class="cm"># shape / dtype</span>
+t.shape    <span class="cm"># torch.Size([3])</span>
+t.dtype    <span class="cm"># torch.float32</span>
+t.device   <span class="cm"># device('cpu')</span>`
+  },
+  {
+    title: "PyTorch Autograd",
+    cat: "torch",
+    desc: "Automatic differentiation and gradient flow.",
+    code: `<span class="kw">import</span> torch
+
+x = torch.tensor(<span class="num">3.0</span>, requires_grad=<span class="bl">True</span>)
+y = x ** <span class="num">2</span> + <span class="num">2</span> * x + <span class="num">1</span>
+
+y.backward()     <span class="cm"># compute gradients</span>
+x.grad           <span class="cm"># dy/dx = 2x+2 = 8.0</span>
+
+<span class="cm"># no grad context (inference)</span>
+<span class="kw">with</span> torch.no_grad():
+    out = model(x)
+
+<span class="cm"># detach from graph</span>
+t = tensor.detach().cpu().numpy()
+
+<span class="cm"># zero grads before backward</span>
+optimizer.zero_grad()
+loss.backward()
+optimizer.step()`
+  },
+  {
+    title: "nn.Module",
+    cat: "torch",
+    desc: "Define a neural network with PyTorch.",
+    code: `<span class="kw">import</span> torch
+<span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+
+<span class="kw">class</span> <span class="cl">MLP</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):
+        <span class="fn">super</span>().__init__()
+        <span class="kw">self</span>.net = nn.Sequential(
+            nn.Linear(<span class="num">128</span>, <span class="num">64</span>),
+            nn.ReLU(),
+            nn.Linear(<span class="num">64</span>, <span class="num">10</span>),
+        )
+
+    <span class="kw">def</span> <span class="fn">forward</span>(<span class="kw">self</span>, x):
+        <span class="kw">return</span> <span class="kw">self</span>.net(x)
+
+model = <span class="cl">MLP</span>()
+x = torch.randn(<span class="num">8</span>, <span class="num">128</span>)
+out = model(x)     <span class="cm"># (8, 10)</span>
+<span class="fn">print</span>(model)       <span class="cm"># layer summary</span>`
+  },
+  {
+    title: "Training Loop",
+    cat: "torch",
+    desc: "Standard PyTorch train/eval loop skeleton.",
+    code: `optimizer = torch.optim.Adam(model.parameters(), lr=<span class="num">1e-3</span>)
+criterion = nn.CrossEntropyLoss()
+
+<span class="cm"># train</span>
+model.train()
+<span class="kw">for</span> batch_x, batch_y <span class="kw">in</span> train_loader:
+    batch_x, batch_y = batch_x.to(device), batch_y.to(device)
+    optimizer.zero_grad()
+    out  = model(batch_x)
+    loss = criterion(out, batch_y)
+    loss.backward()
+    optimizer.step()
+
+<span class="cm"># eval</span>
+model.eval()
+<span class="kw">with</span> torch.no_grad():
+    <span class="kw">for</span> batch_x, batch_y <span class="kw">in</span> val_loader:
+        preds = model(batch_x)
+        <span class="cm"># compute metrics...</span>`
+  },
+
+  // ── PYDANTIC ──────────────────────────────────────────
+  {
+    title: "Pydantic BaseModel",
+    cat: "pydantic",
+    desc: "Data validation and parsing with type safety.",
+    code: `<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+
+<span class="kw">class</span> <span class="cl">User</span>(BaseModel):
+    name: <span class="cl">str</span>
+    age: <span class="cl">int</span>
+    email: <span class="cl">str</span>
+    score: <span class="cl">float</span> = <span class="num">0.0</span>
+    tags: <span class="cl">list</span>[<span class="cl">str</span>] = []
+
+u = <span class="cl">User</span>(name=<span class="str">"Munim"</span>, age=<span class="str">"25"</span>, email=<span class="str">"x@y.com"</span>)
+<span class="cm"># age auto-coerced to int</span>
+
+u.model_dump()    <span class="cm"># → dict</span>
+u.model_dump_json() <span class="cm"># → JSON string</span>
+
+<span class="cl">User</span>.model_validate({<span class="str">"name"</span>:<span class="str">"x"</span>, <span class="str">"age"</span>:<span class="num">1</span>, <span class="str">"email"</span>:<span class="str">"a@b"</span>})`
+  },
+  {
+    title: "Pydantic Validators & Config",
+    cat: "pydantic",
+    desc: "Field constraints, validators, and settings.",
+    code: `<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field, field_validator
+<span class="kw">from</span> pydantic_settings <span class="kw">import</span> BaseSettings
+
+<span class="kw">class</span> <span class="cl">Product</span>(BaseModel):
+    name: <span class="cl">str</span> = Field(min_length=<span class="num">1</span>, max_length=<span class="num">100</span>)
+    price: <span class="cl">float</span> = Field(gt=<span class="num">0</span>)
+    qty: <span class="cl">int</span> = Field(ge=<span class="num">0</span>, default=<span class="num">0</span>)
+
+    <span class="kw">@field_validator</span>(<span class="str">"name"</span>)
+    <span class="kw">def</span> <span class="fn">name_upper</span>(cls, v): <span class="kw">return</span> v.strip().title()
+
+<span class="cm"># settings from env vars</span>
+<span class="kw">class</span> <span class="cl">Settings</span>(BaseSettings):
+    api_key: <span class="cl">str</span>
+    debug: <span class="cl">bool</span> = <span class="bl">False</span>
+    port: <span class="cl">int</span> = <span class="num">8000</span>
+
+    <span class="kw">class</span> Config:
+        env_file = <span class="str">".env"</span>`
+  },
+
+  // ── OOP extras ────────────────────────────────────────
+  {
+    title: "Abstract Base Classes",
+    cat: "classes",
+    desc: "Enforce interface contracts with ABC.",
+    code: `<span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="cl">Shape</span>(ABC):
+
+    <span class="kw">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="kw">self</span>) -> <span class="cl">float</span>: ...
+
+    <span class="kw">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">perimeter</span>(<span class="kw">self</span>) -> <span class="cl">float</span>: ...
+
+    <span class="kw">def</span> <span class="fn">describe</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> <span class="str">f"area={self.area():.2f}"</span>
+
+<span class="kw">class</span> <span class="cl">Circle</span>(<span class="cl">Shape</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, r): <span class="kw">self</span>.r = r
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="num">3.14159</span> * <span class="kw">self</span>.r**<span class="num">2</span>
+    <span class="kw">def</span> <span class="fn">perimeter</span>(<span class="kw">self</span>): <span class="kw">return</span> <span class="num">2</span> * <span class="num">3.14159</span> * <span class="kw">self</span>.r
+
+<span class="cm"># Shape() → TypeError (can't instantiate ABC)</span>`
+  },
+  {
+    title: "__slots__",
+    cat: "classes",
+    desc: "Reduce memory use by fixing allowed attributes.",
+    code: `<span class="kw">class</span> <span class="cl">Point</span>:
+    __slots__ = (<span class="str">"x"</span>, <span class="str">"y"</span>)
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, x, y):
+        <span class="kw">self</span>.x, <span class="kw">self</span>.y = x, y
+
+p = <span class="cl">Point</span>(<span class="num">1</span>, <span class="num">2</span>)
+<span class="cm"># p.z = 3 → AttributeError (no __dict__)</span>
+
+<span class="cm"># ~40-50% less memory vs normal class</span>
+<span class="cm"># faster attribute access</span>
+<span class="cm"># useful for millions of small objects</span>
+<span class="cm"># (e.g. point clouds, bounding boxes)</span>
+
+<span class="kw">import</span> sys
+<span class="fn">print</span>(sys.getsizeof(p))  <span class="cm"># ~48 bytes</span>`
+  },
+
+  // ── TEXT ──────────────────────────────────────────────
+  {
+    title: "textwrap",
+    cat: "text",
+    desc: "Wrap, indent, and dedent text blocks.",
+    code: `<span class="kw">import</span> textwrap
+
+text = <span class="str">"This is a long string that should be wrapped."</span>
+
+<span class="cm"># wrap to width</span>
+textwrap.wrap(text, width=<span class="num">20</span>)
+<span class="cm"># ['This is a long', 'string that should', 'be wrapped.']</span>
+
+<span class="cm"># fill (wrap + join with newlines)</span>
+textwrap.fill(text, width=<span class="num">30</span>)
+
+<span class="cm"># dedent (remove common leading whitespace)</span>
+code = <span class="str">"""
+    def foo():
+        pass
+"""</span>
+textwrap.dedent(code)
+
+<span class="cm"># indent</span>
+textwrap.indent(<span class="str">"line1\nline2"</span>, prefix=<span class="str">"  "</span>)`
+  },
+  {
+    title: "string module",
+    cat: "text",
+    desc: "String constants and Template substitution.",
+    code: `<span class="kw">import</span> string
+
+<span class="cm"># constants</span>
+string.ascii_letters   <span class="cm"># 'abcABC...'</span>
+string.ascii_lowercase <span class="cm"># 'abc...z'</span>
+string.ascii_uppercase <span class="cm"># 'ABC...Z'</span>
+string.digits          <span class="cm"># '0123456789'</span>
+string.punctuation     <span class="cm"># '!"#$%&...'</span>
+
+<span class="cm"># Template (safe substitution)</span>
+t = string.Template(<span class="str">"Hello $name, you are $age"</span>)
+t.substitute(name=<span class="str">"Munim"</span>, age=<span class="num">25</span>)
+<span class="cm"># 'Hello Munim, you are 25'</span>
+
+<span class="cm"># safe_substitute (won't raise on missing key)</span>
+t.safe_substitute(name=<span class="str">"Munim"</span>)
+<span class="cm"># 'Hello Munim, you are $age'</span>`
+  },
+  {
+    title: "sqlite3",
+    cat: "stdlib",
+    desc: "Embedded SQL database — no server needed.",
+    code: `<span class="kw">import</span> sqlite3
+
+conn = sqlite3.connect(<span class="str">"app.db"</span>)   <span class="cm"># or ":memory:"</span>
+cur = conn.cursor()
+
+<span class="cm"># create & insert</span>
+cur.execute(<span class="str">"""CREATE TABLE IF NOT EXISTS users
+             (id INTEGER PRIMARY KEY, name TEXT, age INT)"""</span>)
+cur.execute(<span class="str">"INSERT INTO users VALUES (?, ?, ?)"</span>,
+            (<span class="num">1</span>, <span class="str">"Munim"</span>, <span class="num">25</span>))
+conn.commit()
+
+<span class="cm"># query</span>
+cur.execute(<span class="str">"SELECT * FROM users WHERE age > ?"</span>, (<span class="num">20</span>,))
+rows = cur.fetchall()
+conn.close()`
+  },
+  {
+    title: "pickle",
+    cat: "stdlib",
+    desc: "Serialize and deserialize Python objects.",
+    code: `<span class="kw">import</span> pickle
+
+data = {<span class="str">"model"</span>: [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>], <span class="str">"config"</span>: {<span class="str">"lr"</span>: <span class="num">0.01</span>}}
+
+<span class="cm"># save to file</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.pkl"</span>, <span class="str">"wb"</span>) <span class="kw">as</span> f:
+    pickle.dump(data, f)
+
+<span class="cm"># load from file</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"data.pkl"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    loaded = pickle.load(f)
+
+<span class="cm"># to/from bytes</span>
+b = pickle.dumps(data)
+data2 = pickle.loads(b)
+
+<span class="cm"># ⚠ never unpickle untrusted data</span>`
+  },
+];
+
+// ── Render ──────────────────────────────────────────────
+let currentCat = "all";
+let currentSearch = "";
+
+function renderCards() {
+  const grid = document.getElementById("grid");
+  const bar = document.getElementById("countBar");
+  const q = currentSearch.toLowerCase();
+
+  const filtered = cards.filter(c => {
+    const catMatch = currentCat === "all" || c.cat === currentCat;
+    const searchMatch = !q || c.title.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q);
+    return catMatch && searchMatch;
+  });
+
+  bar.textContent = `${filtered.length} card${filtered.length !== 1 ? "s" : ""}`;
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty">no cards found for "${currentSearch}"</div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((c, i) => `
+    <div class="card" style="animation-delay:${i * 30}ms" onclick="toggleCard(event, this)">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="card-title">${c.title}</span>
+          <div class="card-tags">
+            <span class="tag tag-${c.cat}">${c.cat}</span>
+          </div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <p class="card-desc">${c.desc}</p>
+          <pre><button class="copy-btn" onclick="copyCode(event, this)">copy</button><code>${c.code}</code></pre>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function toggleCard(e, card) {
+  card.classList.toggle("collapsed");
+}
+
+function copyCode(e, btn) {
+  e.stopPropagation();
+  const code = btn.nextElementSibling.innerText;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = "✓";
+    btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 1500);
+  });
+}
+
+document.getElementById("searchInput").addEventListener("input", e => {
+  currentSearch = e.target.value;
+  renderCards();
+});
+
+document.getElementById("filters").addEventListener("click", e => {
+  if (!e.target.matches(".filter-btn")) return;
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  e.target.classList.add("active");
+  currentCat = e.target.dataset.cat;
+  renderCards();
+});
+
+renderCards();
+</script>
+</body>
+</html>
